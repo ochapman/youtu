@@ -241,12 +241,35 @@ func (y *Youtu) NewPerson(image string, person_id string, group_ids []string, pe
 	return
 }
 
+type DelPersonReq struct {
+	App_id    string `json:"app_id"`
+	Person_id string `json:"person_id"` //待删除个体ID
+}
+
+type DelPersonRsp struct {
+	Session_id string `json:"session_id"` //相应请求的session标识符
+	Deleted    int    `json:"deleted"`    //成功删除的Person数量
+	Errorcode  int    `json:"errorcode"`  //返回状态码
+	Errormsg   string `json:"errormsg"`   //返回错误消息
+}
+
+//删除一个Person
+func (y *Youtu) DelPerson(person_id string) (dpr DelPersonRsp, err error) {
+	req := DelPersonReq{
+		App_id:    y.AppId(),
+		Person_id: person_id,
+	}
+	err = y.interfaceRequest("delperson", req, &dpr)
+	return
+}
+
 func (y *Youtu) interfaceURL(ifname string) string {
 	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
 }
 
 func (y *Youtu) interfaceRequest(ifname string, req, rsp interface{}) (err error) {
 	url := y.interfaceURL(ifname)
+	fmt.Printf("req: %#v\n", req)
 	data, err := json.Marshal(req)
 	if err != nil {
 		return
