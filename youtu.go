@@ -41,7 +41,6 @@ type AppSign struct {
 type Youtu struct {
 	app_sign AppSign
 	host     string
-	app_id   string
 }
 
 func (y *Youtu) AppId() string {
@@ -49,11 +48,9 @@ func (y *Youtu) AppId() string {
 }
 
 func Init(appSign AppSign, host string) *Youtu {
-	app_id := strconv.Itoa(int(appSign.app_id))
 	return &Youtu{
 		app_sign: appSign,
 		host:     host,
-		app_id:   app_id,
 	}
 }
 
