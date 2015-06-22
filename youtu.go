@@ -329,6 +329,7 @@ type SetInfoRsp struct {
 	errormsg   string `json:"errormsg"`   //返回错误消息
 }
 
+//设置Person的name.
 func (y *Youtu) SetInfo(person_id string, person_name string, tag string) (sir SetInfoRsp, err error) {
 	req := SetInfoReq{
 		App_id:      y.AppId(),
@@ -337,6 +338,31 @@ func (y *Youtu) SetInfo(person_id string, person_name string, tag string) (sir S
 		Tag:         tag,
 	}
 	err = y.interfaceRequest("setinfo", req, &sir)
+	return
+}
+
+type GetInfoReq struct {
+	App_id    string `json:"app_id"`    //App的 API ID
+	Person_id string `json:"person_id"` //待查询个体的ID
+}
+
+type GetInfoRsp struct {
+	Person_name string   `json:"person_name"` //相应person的name
+	Person_id   string   `json:"person_id"`   //相应person的id
+	Group_ids   []string `json:"group_ids"`   //包含此个体的组列表
+	Face_ids    []string `json:"face_ids"`    //包含的人脸列表
+	Session_id  string
+	Errorcode   int    `json:"errorcode"` //返回状态码
+	Errormsg    string `json:"errormsg"`  //返回错误消息
+}
+
+//获取一个Person的信息, 包括name, id, tag, 相关的face, 以及groups等信息。
+func (y *Youtu) GetInfo(person_id string) (gir GetInfoRsp, err error) {
+	req := GetInfoReq{
+		App_id:    y.AppId(),
+		Person_id: person_id,
+	}
+	err = y.interfaceRequest("getinfo", req, &gir)
 	return
 }
 
