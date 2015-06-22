@@ -207,6 +207,40 @@ func (y *Youtu) FaceIdentify(image string, group_id string) (fir FaceIdentifyRsp
 	return
 }
 
+type NewPersonReq struct {
+	App_id      string   `json:"app_id"` //App的 API ID
+	Image       string   `json:"image"`  //使用base64编码的二进制图片数据
+	Person_id   string   `json:"person_id"`
+	Group_ids   []string `json:"group_ids"`             // 	加入到组的列表
+	Person_name string   `json:"person_name,omitempty"` //名字
+	Tag         string   `json:"tag,omitempty"`         //备注信息
+}
+
+type NewPersonRsp struct {
+	Session_id  string `json:"session_id"`  //相应请求的session标识符
+	Suc_group   int    `json:"suc_group"`   //成功被加入的group数量
+	Suc_face    int    `json:"suc_face"`    //成功加入的face数量
+	Person_name string `json:"person_name"` //相应person的name
+	Person_id   string `json:"person_id"`   //相应person的id
+	Face_id     string `json:"face_id"`     //创建所用图片生成的face_id
+	Errorcode   int    `json:"errorcode"`   //返回码
+	Errormsg    string `json:"errormsg"`    //返回错误消息
+}
+
+//创建一个Person，并将Person放置到group_ids指定的组当中
+func (y *Youtu) NewPerson(image string, person_id string, group_ids []string, person_name string, tag string) (npr NewPersonRsp, err error) {
+	req := NewPersonReq{
+		App_id:      y.AppId(),
+		Person_id:   person_id,
+		Image:       image,
+		Group_ids:   group_ids,
+		Person_name: person_name,
+		Tag:         tag,
+	}
+	err = y.interfaceRequest("newperson", req, &npr)
+	return
+}
+
 func (y *Youtu) interfaceURL(ifname string) string {
 	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
 }
