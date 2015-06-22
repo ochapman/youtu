@@ -44,6 +44,10 @@ type Youtu struct {
 	app_id   string
 }
 
+func (y *Youtu) AppId() string {
+	return strconv.Itoa(int(y.app_sign.app_id))
+}
+
 func Init(appSign AppSign, host string) *Youtu {
 	app_id := strconv.Itoa(int(appSign.app_id))
 	return &Youtu{
@@ -109,6 +113,44 @@ func (y *Youtu) DetectFace(imageData string, mode DetectMode) (dfr DetectFaceRsp
 	err = json.Unmarshal(rsp, &dfr)
 	if err != nil {
 		return dfr, fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
+	}
+	return
+}
+
+type FaceCompareReq struct {
+	App_id string `json:"app_id"`
+	ImageA string `json:"imageA"` //使用base64编码的二进制图片数据A
+	ImageB string `json:"imageB"` //使用base64编码的二进制图片数据B
+}
+
+type FaceCompareRsp struct {
+	Eyebrow_sim float32 `json:"eyebrow_sim"` //眉毛的相似度。
+	Eye_sim     float32 `json:"eye_sim"`     //眼睛的相似度
+	Nose_sim    float32 `json:"nose_sim"`    //鼻子的相似度
+	Mouth_sim   float32 `json:"mouth_sim"`   //嘴巴的相似度
+	Similarity  float32 `json:"similarity"`  //两个face的相似度
+	Errorcode   int32   `json:"errorcode"`   //返回状态码
+	Errormsg    string  `json:"errormsg"`    //返回错误消息
+}
+
+func (y *Youtu) FaceCompare(imageA, imageB string) (fcr FaceCompareRsp, err error) {
+	url := "http://" + y.host + "/youtu/api/facecompare"
+	req := FaceCompareReq{
+		App_id: y.AppId(),
+		ImageA: imageA,
+		ImageB: imageB,
+	}
+	data, err := json.Marshal(req)
+	if err != nil {
+		return
+	}
+	rsp, err := y.get(url, string(data))
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(rsp, &fcr)
+	if err != nil {
+		return fcr, fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
 	}
 	return
 }
