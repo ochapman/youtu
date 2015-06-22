@@ -263,6 +263,34 @@ func (y *Youtu) DelPerson(person_id string) (dpr DelPersonRsp, err error) {
 	return
 }
 
+type AddFaceReq struct {
+	App_id    string   `json:"app_id"`        //App的 API ID
+	Person_id string   `json:"person_id"`     //String 	待增加人脸的个体id
+	Images    []string `json:"images"`        //base64编码的二进制图片数据构成的数组
+	Tag       string   `json:"tag,omitempty"` //备注信息
+}
+
+type AddFaceRsp struct {
+	Session_id string   `json:"session_id"` //相应请求的session标识符
+	Added      int      `json:"added"`      //成功加入的face数量
+	Face_ids   []string `json:"face_ids"`   //增加的人脸ID列表
+	Errorcode  int      `json:"errorcode"`  //返回状态码
+	Errormsg   string   `json:"errormsg"`   //返回错误消息
+}
+
+//将一组Face加入到一个Person中。注意，一个Face只能被加入到一个Person中。
+//一个Person最多允许包含10000个Face
+func (y *Youtu) AddFace(images []string, person_id string, tag string) (afr AddFaceRsp, err error) {
+	req := AddFaceReq{
+		App_id:    y.AppId(),
+		Images:    images,
+		Person_id: person_id,
+		Tag:       tag,
+	}
+	err = y.interfaceRequest("addface", req, &afr)
+	return
+}
+
 func (y *Youtu) interfaceURL(ifname string) string {
 	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
 }
