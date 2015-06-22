@@ -67,28 +67,28 @@ type DetectFaceReq struct {
 }
 
 type Face struct {
-	Face_id    string  `json:"face_id"`
-	X          int32   `json:"x"`
-	Y          int32   `json:"y"`
-	Width      float32 `json:"width"`
-	Height     float32 `json:"height"`
-	Gender     int32   `json:"gender"`
-	Age        int32   `json:"age"`
-	Expression int32   `json:"expression"`
-	Glass      bool    `json:"glass"`
-	Pitch      int32   `json:"pitch"`
-	Yaw        int32   `json:"yaw"`
-	Roll       int32   `json:"roll"`
+	Face_id    string  `json:"face_id"`    //人脸标识
+	X          int32   `json:"x"`          //人脸框左上角x
+	Y          int32   `json:"y"`          //人脸框左上角y
+	Width      float32 `json:"width"`      //人脸框宽度
+	Height     float32 `json:"height"`     //人脸框高度
+	Gender     int32   `json:"gender"`     //性别 [0/(female)~100(male)]
+	Age        int32   `json:"age"`        //年龄 [0~100]
+	Expression int32   `json:"expression"` //object 	微笑[0(normal)~50(smile)~100(laugh)]
+	Glass      bool    `json:"glass"`      //是否有眼镜 [true,false]
+	Pitch      int32   `json:"pitch"`      //上下偏移[-30,30]
+	Yaw        int32   `json:"yaw"`        //左右偏移[-30,30]
+	Roll       int32   `json:"roll"`       //平面旋转[-180,180]
 }
 
 type DetectFaceRsp struct {
-	Session_id   string `json:"session_id"`
-	Image_id     string `json:"image_id"`
-	Image_width  int32  `json:"image_width"`
-	Image_height int32  `json:"image_height"`
-	Face         []Face `json:"face"`
-	ErrorCode    int    `json:"errorcode"`
-	ErrorMsg     string `json:"errormsg"`
+	Session_id   string `json:"session_id"`   //相应请求的session标识符，可用于结果查询
+	Image_id     string `json:"image_id"`     //系统中的图片标识符，用于标识用户请求中的图片
+	Image_width  int32  `json:"image_width"`  //请求图片的宽度
+	Image_height int32  `json:"image_height"` //请求图片的高度
+	Face         []Face `json:"face"`         //被检测出的人脸Face的列表
+	ErrorCode    int    `json:"errorcode"`    //返回状态值
+	ErrorMsg     string `json:"errormsg"`     //返回错误消息
 }
 
 func (y *Youtu) DetectFace(imageData string, mode DetectMode) (dfr DetectFaceRsp, err error) {
