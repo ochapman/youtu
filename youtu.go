@@ -315,6 +315,31 @@ func (y *Youtu) DelFace(person_id string, face_ids []string) (dfr DelFaceRsp, er
 	return
 }
 
+type SetInfoReq struct {
+	App_id      string `json:"app_id"` //App的 API ID
+	Person_id   string `json:"person_id"`
+	Person_name string `json:"person_name,omitempty"` //新的name
+	Tag         string `json:"tag,omitempty"`         //备注信息
+}
+
+type SetInfoRsp struct {
+	session_id string `json:"session_id"` //相应请求的session标识符
+	person_id  string `json:"person_id"`  //相应person的id
+	errorcode  int32  `json:"errorcode"`  //返回状态码
+	errormsg   string `json:"errormsg"`   //返回错误消息
+}
+
+func (y *Youtu) SetInfo(person_id string, person_name string, tag string) (sir SetInfoRsp, err error) {
+	req := SetInfoReq{
+		App_id:      y.AppId(),
+		Person_id:   person_id,
+		Person_name: person_name,
+		Tag:         tag,
+	}
+	err = y.interfaceRequest("setinfo", req, &sir)
+	return
+}
+
 func (y *Youtu) interfaceURL(ifname string) string {
 	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
 }
