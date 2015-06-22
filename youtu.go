@@ -291,6 +291,30 @@ func (y *Youtu) AddFace(images []string, person_id string, tag string) (afr AddF
 	return
 }
 
+type DelFaceReq struct {
+	App_id    string   `json:"app_id"`    //App的 API ID
+	Person_id string   `json:"person_id"` //待删除人脸的person ID
+	Face_ids  []string `json:"face_ids"`  //删除人脸id的列表
+}
+
+type DelFaceRsp struct {
+	Session_id string `json:"session_id"` //相应请求的session标识符
+	Deleted    int32  `json:"deleted"`    //成功删除的face数量
+	Errorcode  int32  `json:"errorcode"`  //返回状态码
+	Errormsg   string `json:"errormsg"`   //返回错误消息
+}
+
+//删除一个person下的face，包括特征，属性和face_id.
+func (y *Youtu) DelFace(person_id string, face_ids []string) (dfr DelFaceRsp, err error) {
+	req := DelFaceReq{
+		App_id:    y.AppId(),
+		Person_id: person_id,
+		Face_ids:  face_ids,
+	}
+	err = y.interfaceRequest("delface", req, &dfr)
+	return
+}
+
 func (y *Youtu) interfaceURL(ifname string) string {
 	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
 }
