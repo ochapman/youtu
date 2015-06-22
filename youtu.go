@@ -61,9 +61,9 @@ const (
 )
 
 type DetectFaceReq struct {
-	App_id string `json:"app_id"` //App的 API ID
-	Image  string `json:"image"`  //base64编码的二进制图片数据
-	//	Mode   int    `omiempty,json:"mode"` //检测模式 0/1 正常/大脸模式
+	App_id string     `json:"app_id"`         //App的 API ID
+	Image  string     `json:"image"`          //base64编码的二进制图片数据
+	Mode   DetectMode `json:"mode,omitempty"` //检测模式 0/1 正常/大脸模式
 }
 
 type Face struct {
@@ -96,6 +96,7 @@ func (y *Youtu) DetectFace(imageData string, mode DetectMode) (dfr DetectFaceRsp
 	req := DetectFaceReq{
 		App_id: strconv.Itoa(int(y.app_sign.app_id)),
 		Image:  imageData,
+		Mode:   mode,
 	}
 	data, err := json.Marshal(req)
 	if err != nil {
@@ -103,12 +104,11 @@ func (y *Youtu) DetectFace(imageData string, mode DetectMode) (dfr DetectFaceRsp
 	}
 	rsp, err := y.get(url, string(data))
 	if err != nil {
-		fmt.Println("y.get failed", err)
 		return
 	}
 	err = json.Unmarshal(rsp, &dfr)
 	if err != nil {
-		fmt.Printf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
+		return dfr, fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
 	}
 	return
 }
@@ -116,10 +116,8 @@ func (y *Youtu) DetectFace(imageData string, mode DetectMode) (dfr DetectFaceRsp
 func (y *Youtu) orignalSign() string {
 	as := y.app_sign
 	now := time.Now().Unix()
-	//now := 1434900916
 	rand.Seed(int64(now))
-	//rnd := rand.Int31n(99999999)
-	rnd := 1882422330
+	rnd := rand.Int31()
 	return fmt.Sprintf("a=%d&k=%s&e=%d&t=%d&r=%d&u=%s&f=",
 		as.app_id,
 		as.secret_id,
@@ -140,25 +138,18 @@ func EncodeImage(file string) (imgData string, err error) {
 
 func (y *Youtu) sign() string {
 	orig_sign := y.orignalSign()
-	//orig_sign := "a=10000089&k=AKIDZgHaklNpo7vrztgYLl1LEyHO3I1GCcvz&e=1436353609&t=1434929048&r=1752593874&u=3041722595&f="
-	fmt.Println("orig_sign:", orig_sign)
 	h := hmac.New(sha1.New, []byte(y.app_sign.secret_key))
 	h.Write([]byte(orig_sign))
 	hm := h.Sum(nil)
-	for i := range hm {
-		fmt.Printf("%2x ", hm[i])
-	}
 	b64 := base64.StdEncoding.EncodeToString([]byte(string(hm) + orig_sign))
-	fmt.Println("b64:", b64)
 	return b64
 }
 
 func (y *Youtu) get(addr string, req string) (rsp []byte, err error) {
 	tr := &http.Transport{
-		DisableCompression: true,
+		DisableCompression: false,
 	}
 	client := &http.Client{Transport: tr}
-	//fmt.Printf("req: %s\n", req)
 	httpreq, err := http.NewRequest("POST", addr, strings.NewReader(req))
 	if err != nil {
 		return
@@ -168,7 +159,6 @@ func (y *Youtu) get(addr string, req string) (rsp []byte, err error) {
 	httpreq.Header.Add("User-Agent", "")
 	httpreq.Header.Add("Accept", "*/*")
 	httpreq.Header.Add("Expect", "100-continue")
-	fmt.Printf("httpreq: %s\n", httpreq.URL)
 	resp, err := client.Do(httpreq)
 	if err != nil {
 		return
