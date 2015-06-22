@@ -181,6 +181,32 @@ func (y *Youtu) FaceVerify(image string, persion_id string) (fvr FaceVerifyRsp, 
 	return
 }
 
+type FaceIdentifyReq struct {
+	App_id   string `json:"app_id"`   //App的 API ID
+	Group_id string `json:"group_id"` //候选人组id
+	Image    string `json:"image"`    //使用base64编码的二进制图片数据
+}
+
+type FaceIdentifyRsp struct {
+	Session_id string  `json:"session_id"` //相应请求的session标识符，可用于结果查询
+	Person_id  string  `json:"person_id"`  //识别结果，person_id
+	Face_id    string  `json:"face_id"`    //识别的face_id
+	Confidence float32 `json:"confidence"` //置信度
+	Errorcode  int     `json:"errorcode"`  //返回状态码
+	Errormsg   string  `json:"errormsg"`   //返回错误消息
+}
+
+//对于一个待识别的人脸图片，在一个Group中识别出最相似的Person作为其身份返回
+func (y *Youtu) FaceIdentify(image string, group_id string) (fir FaceIdentifyRsp, err error) {
+	req := FaceIdentifyReq{
+		App_id:   y.AppId(),
+		Group_id: group_id,
+		Image:    image,
+	}
+	err = y.interfaceRequest("faceidentify", req, &fir)
+	return
+}
+
 func (y *Youtu) interfaceURL(ifname string) string {
 	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
 }
