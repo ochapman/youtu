@@ -156,6 +156,54 @@ func (y *Youtu) FaceCompare(imageA, imageB string) (fcr FaceCompareRsp, err erro
 	return
 }
 
+type FaceVerifyReq struct {
+	App_id    string `json:"app_id"`    //App的 API ID
+	Image     string `json:"image"`     //使用base64编码的二进制图片数据
+	Person_id string `json:"person_id"` //待验证的Person
+}
+
+type FaceVerifyRsp struct {
+	Ismatch    bool    `json:"ismatch"`    //两个输入是否为同一人的判断
+	Confidence float32 `json:"confidence"` //系统对这个判断的置信度。
+	Session_id string  `json:"session_id"` //相应请求的session标识符，可用于结果查询
+	Errorcode  int32   `json:"errorcode"`  //返回状态码
+	Errormsg   string  `json:"errormsg"`   //返回错误消息
+}
+
+//给定一个Face和一个Person，返回是否是同一个人的判断以及置信度。
+func (y *Youtu) FaceVerify(image string, persion_id string) (fvr FaceVerifyRsp, err error) {
+	req := FaceVerifyReq{
+		App_id:    y.AppId(),
+		Image:     image,
+		Person_id: persion_id,
+	}
+	err = y.interfaceRequest("faceverify", req, &fvr)
+	return
+}
+
+func (y *Youtu) interfaceURL(ifname string) string {
+	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
+}
+
+func (y *Youtu) interfaceRequest(ifname string, req, rsp interface{}) (err error) {
+	url := y.interfaceURL(ifname)
+	data, err := json.Marshal(req)
+	if err != nil {
+		return
+	}
+	body, err := y.get(url, string(data))
+	if err != nil {
+		return
+	}
+	fmt.Println("body: ", string(body))
+	err = json.Unmarshal(body, &rsp)
+	if err != nil {
+		return fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
+	}
+	fmt.Printf("rsp: %#v\n", rsp)
+	return
+}
+
 func (y *Youtu) orignalSign() string {
 	as := y.app_sign
 	now := time.Now().Unix()
