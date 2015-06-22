@@ -92,7 +92,9 @@ type DetectFaceRsp struct {
 	ErrorMsg     string `json:"errormsg"`     //返回错误消息
 }
 
-//检测给定图片(Image)中的所有人脸(Face)的位置和相应的面部属性。位置包括(x, y, w, h)，面部属性包括性别(gender), 年龄(age), 表情(expression), 眼镜(glass)和姿态(pitch，roll，yaw).
+//检测给定图片(Image)中的所有人脸(Face)的位置和相应的面部属性。
+//位置包括(x, y, w, h)，面部属性包括性别(gender), 年龄(age),
+//表情(expression), 眼镜(glass)和姿态(pitch，roll，yaw).
 func (y *Youtu) DetectFace(imageData string, mode DetectMode) (dfr DetectFaceRsp, err error) {
 	url := "http://" + y.host + "/youtu/api/detectface"
 	req := DetectFaceReq{
