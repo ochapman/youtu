@@ -384,6 +384,28 @@ func (y *Youtu) GetGroupIDs() (ggr GetGroupIDsRsp, err error) {
 	err = y.interfaceRequest("getgroupids", req, &ggr)
 	return
 }
+
+type GetPersonIDsReq struct {
+	App_id   string `json:"app_id"`   //App的 API ID
+	Group_id string `json:"group_id"` //组id
+}
+
+type GetPersonIDsRsp struct {
+	Person_ids []string `json:"person_ids"` //相应person的id列表
+	Errorcode  int32    `json:"errorcode"`  //返回状态码
+	Errormsg   string   `json:"errormsg"`   //返回错误消息
+}
+
+//获取一个组Group中所有person列表
+func (y *Youtu) GetPersonIDs(group_id string) (gpr GetPersonIDsRsp, err error) {
+	req := GetPersonIDsReq{
+		App_id:   y.AppId(),
+		Group_id: group_id,
+	}
+	err = y.interfaceRequest("getpersonids", req, &gpr)
+	return
+}
+
 func (y *Youtu) interfaceURL(ifname string) string {
 	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
 }
