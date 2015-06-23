@@ -487,10 +487,9 @@ func (y *Youtu) sign() string {
 }
 
 func (y *Youtu) get(addr string, req string) (rsp []byte, err error) {
-	tr := &http.Transport{
-		DisableCompression: false,
+	client := &http.Client{
+		Timeout: time.Duration(10 * time.Second),
 	}
-	client := &http.Client{Transport: tr}
 	httpreq, err := http.NewRequest("POST", addr, strings.NewReader(req))
 	if err != nil {
 		return
