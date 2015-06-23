@@ -30,6 +30,10 @@ var (
 	ErrUserIDTooLong = errors.New("user id too long")
 )
 
+var (
+	DefaultHost = "api.youtu.qq.com"
+)
+
 type AppSign struct {
 	app_id     uint32 //接入优图服务时,生成的唯一id, 用于唯一标识接入业务
 	secret_id  string //标识api鉴权调用者的密钥身份
@@ -476,7 +480,9 @@ func (y *Youtu) sign() string {
 	h := hmac.New(sha1.New, []byte(y.app_sign.secret_key))
 	h.Write([]byte(orig_sign))
 	hm := h.Sum(nil)
-	b64 := base64.StdEncoding.EncodeToString([]byte(string(hm) + orig_sign))
+	//attach orig_sign to hm
+	dst_sign := []byte(string(hm) + orig_sign)
+	b64 := base64.StdEncoding.EncodeToString(dst_sign)
 	return b64
 }
 
