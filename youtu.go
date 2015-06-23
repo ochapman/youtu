@@ -96,24 +96,12 @@ type DetectFaceRsp struct {
 //位置包括(x, y, w, h)，面部属性包括性别(gender), 年龄(age),
 //表情(expression), 眼镜(glass)和姿态(pitch，roll，yaw).
 func (y *Youtu) DetectFace(imageData string, mode DetectMode) (dfr DetectFaceRsp, err error) {
-	url := "http://" + y.host + "/youtu/api/detectface"
 	req := DetectFaceReq{
 		App_id: strconv.Itoa(int(y.app_sign.app_id)),
 		Image:  imageData,
 		Mode:   mode,
 	}
-	data, err := json.Marshal(req)
-	if err != nil {
-		return
-	}
-	rsp, err := y.get(url, string(data))
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(rsp, &dfr)
-	if err != nil {
-		return dfr, fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
-	}
+	err = y.interfaceRequest("detectface", req, &dfr)
 	return
 }
 
