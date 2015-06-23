@@ -406,6 +406,48 @@ func (y *Youtu) GetPersonIDs(group_id string) (gpr GetPersonIDsRsp, err error) {
 	return
 }
 
+type GetFaceIDsReq struct {
+	App_id    string `json:"app_id"`    //App的 API ID
+	Person_id string `json:"person_id"` //个体id
+}
+
+type GetFaceIDsRsp struct {
+	Face_ids  []string `json:"face_ids"`  //相应face的id列表
+	Errorcode int32    `json:"errorcode"` //返回状态码
+	Errormsg  string   `json:"errormsg"`  //返回错误消息
+}
+
+//获取一个组person中所有face列表
+func (y *Youtu) GetFaceIDs(person_id string) (gfr GetFaceIDsRsp, err error) {
+	req := GetFaceIDsReq{
+		App_id:    y.AppId(),
+		Person_id: person_id,
+	}
+	err = y.interfaceRequest("getfaceids", req, &gfr)
+	return
+}
+
+type GetFaceInfoReq struct {
+	App_id  string `json:"app_id"`  //App的 API ID
+	Face_id string `json:"face_id"` //人脸id
+}
+
+type GetFaceInfoRsp struct {
+	face_info Face   `json:"face_info"` //人脸信息
+	errorcode int32  `json:"errorcode"` //返回状态码
+	errormsg  string `json:"errormsg"`  //返回错误消息
+}
+
+//获取一个face的相关特征信息
+func (y *Youtu) GetFaceInfo(face_id string) (gfr GetFaceInfoRsp, err error) {
+	req := GetFaceInfoReq{
+		App_id:  y.AppId(),
+		Face_id: face_id,
+	}
+	err = y.interfaceRequest("getfaceinfo", req, &gfr)
+	return
+}
+
 func (y *Youtu) interfaceURL(ifname string) string {
 	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
 }
