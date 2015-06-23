@@ -31,11 +31,11 @@ var (
 )
 
 type AppSign struct {
-	app_id     uint32
-	secret_id  string
-	secret_key string
-	expired    uint32
-	user_id    string
+	app_id     uint32 //接入优图服务时,生成的唯一id, 用于唯一标识接入业务
+	secret_id  string //标识api鉴权调用者的密钥身份
+	secret_key string //用于加密签名字符串和服务器端验证签名字符串的密钥，secret_key 必须严格保管避免泄露
+	expired    uint32 //此签名的凭证有效期，是一个符合UNIX Epoch时间戳规范的数值，单位为秒, e应大于t, 生成的签名在 t 到 e 的时间内 都是有效的. 如果是0, 则生成的签名只有再t的时刻是有效的
+	user_id    string //接入业务自行定义的用户id，用于唯一标识一个用户
 }
 
 type Youtu struct {
@@ -123,24 +123,12 @@ type FaceCompareRsp struct {
 
 //计算两个Face的相似性以及五官相似度
 func (y *Youtu) FaceCompare(imageA, imageB string) (fcr FaceCompareRsp, err error) {
-	url := "http://" + y.host + "/youtu/api/facecompare"
 	req := FaceCompareReq{
 		App_id: y.AppId(),
 		ImageA: imageA,
 		ImageB: imageB,
 	}
-	data, err := json.Marshal(req)
-	if err != nil {
-		return
-	}
-	rsp, err := y.get(url, string(data))
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(rsp, &fcr)
-	if err != nil {
-		return fcr, fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
-	}
+	err = y.interfaceRequest("facecompare", req, &fcr)
 	return
 }
 
