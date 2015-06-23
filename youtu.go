@@ -434,7 +434,7 @@ func (y *Youtu) interfaceURL(ifname string) string {
 
 func (y *Youtu) interfaceRequest(ifname string, req, rsp interface{}) (err error) {
 	url := y.interfaceURL(ifname)
-	fmt.Printf("req: %#v\n", req)
+	//fmt.Printf("req: %#v\n", req)
 	data, err := json.Marshal(req)
 	if err != nil {
 		return
@@ -443,12 +443,12 @@ func (y *Youtu) interfaceRequest(ifname string, req, rsp interface{}) (err error
 	if err != nil {
 		return
 	}
-	fmt.Println("body: ", string(body))
+	//fmt.Println("body: ", string(body))
 	err = json.Unmarshal(body, &rsp)
 	if err != nil {
 		return fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
 	}
-	fmt.Printf("rsp: %#v\n", rsp)
+	//fmt.Printf("rsp: %#v\n", rsp)
 	return
 }
 
