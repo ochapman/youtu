@@ -34,7 +34,7 @@ var (
 	DefaultHost = "api.youtu.qq.com" //默认host
 )
 
-//应用签名鉴权
+//AppSign 应用签名鉴权
 type AppSign struct {
 	app_id     uint32 //接入优图服务时,生成的唯一id, 用于唯一标识接入业务
 	secret_id  string //标识api鉴权调用者的密钥身份
@@ -43,7 +43,7 @@ type AppSign struct {
 	user_id    string //接入业务自行定义的用户id，用于唯一标识一个用户, 登陆开发者账号的QQ号码
 }
 
-//新建应用签名
+//NewAppSign 新建应用签名
 func NewAppSign(app_id uint32, secret_id string, secret_key string, expired uint32, user_id string) (as AppSign, err error) {
 	if len(user_id) > USER_ID_MAX_LEN {
 		err = ErrUserIDTooLong
@@ -59,7 +59,7 @@ func NewAppSign(app_id uint32, secret_id string, secret_key string, expired uint
 	return
 }
 
-//Youtu，存储签名和host
+//Youtu 存储签名和host
 type Youtu struct {
 	app_sign AppSign
 	host     string
@@ -69,7 +69,7 @@ func (y *Youtu) appId() string {
 	return strconv.Itoa(int(y.app_sign.app_id))
 }
 
-//Youtu初始化
+//Init Youtu初始化
 func Init(appSign AppSign, host string) *Youtu {
 	return &Youtu{
 		app_sign: appSign,
@@ -77,7 +77,7 @@ func Init(appSign AppSign, host string) *Youtu {
 	}
 }
 
-//检测模式，分正常和大脸
+//DetectMode 检测模式，分正常和大脸
 type DetectMode int
 
 const (
