@@ -186,7 +186,7 @@ func TestGetPersonIDs(t *testing.T) {
 	t.Logf("gpr: %#v\n", gpr)
 }
 
-func TestGetPersonIDs(t *testing.T) {
+func TestGetFaceIDs(t *testing.T) {
 	yt := Init(as, DefaultHost)
 	gfr, err := yt.GetFaceIDs("12345")
 	if err != nil {
