@@ -39,7 +39,7 @@ type AppSign struct {
 	secret_id  string //标识api鉴权调用者的密钥身份
 	secret_key string //用于加密签名字符串和服务器端验证签名字符串的密钥，secret_key 必须严格保管避免泄露
 	expired    uint32 //此签名的凭证有效期，是一个符合UNIX Epoch时间戳规范的数值，单位为秒, e应大于t, 生成的签名在 t 到 e 的时间内 都是有效的. 如果是0, 则生成的签名只有再t的时刻是有效的
-	user_id    string //接入业务自行定义的用户id，用于唯一标识一个用户
+	user_id    string //接入业务自行定义的用户id，用于唯一标识一个用户, 登陆开发者账号的QQ号码
 }
 
 type Youtu struct {
