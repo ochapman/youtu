@@ -488,7 +488,7 @@ func (y *Youtu) sign() string {
 
 func (y *Youtu) get(addr string, req string) (rsp []byte, err error) {
 	client := &http.Client{
-		Timeout: time.Duration(10 * time.Second),
+		Timeout: time.Duration(20 * time.Second),
 	}
 	httpreq, err := http.NewRequest("POST", addr, strings.NewReader(req))
 	if err != nil {
@@ -503,6 +503,7 @@ func (y *Youtu) get(addr string, req string) (rsp []byte, err error) {
 	if err != nil {
 		return
 	}
+	defer resp.Body.Close()
 	rsp, err = ioutil.ReadAll(resp.Body)
 	return
 }
