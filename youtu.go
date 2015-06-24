@@ -42,6 +42,21 @@ type AppSign struct {
 	user_id    string //接入业务自行定义的用户id，用于唯一标识一个用户, 登陆开发者账号的QQ号码
 }
 
+func NewAppSign(app_id uint32, secret_id string, secret_key string, expired uint32, user_id string) (as AppSign, err error) {
+	if len(user_id) > USER_ID_MAX_LEN {
+		err = ErrUserIDTooLong
+		return
+	}
+	as = AppSign{
+		app_id:     app_id,
+		secret_id:  secret_id,
+		secret_key: secret_key,
+		expired:    expired,
+		user_id:    user_id,
+	}
+	return
+}
+
 type Youtu struct {
 	app_sign AppSign
 	host     string
