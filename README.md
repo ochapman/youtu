@@ -56,3 +56,6 @@ func main() {
 
 ###文档
 [![GoDoc](https://godoc.org/github.com/ochapman/youtu?status.svg)](https://godoc.org/github.com/ochapman/youtu)
+
+###构建
+[![Build Status](https://travis-ci.org/ochapman/youtu.svg?branch=master)](https://travis-ci.org/ochapman/youtu)
