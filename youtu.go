@@ -1,6 +1,6 @@
 /*
 * File Name:	youtu.go
-* Description:
+* Description:  http://open.youtu.qq.com API
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Created:	2015-06-19
  */
@@ -23,17 +23,18 @@ import (
 )
 
 const (
-	USER_ID_MAX_LEN = 110
+	USER_ID_MAX_LEN = 110 //用户ID灯最大长度
 )
 
 var (
-	ErrUserIDTooLong = errors.New("user id too long")
+	ErrUserIDTooLong = errors.New("user id too long") //用户ID过长错误
 )
 
 var (
-	DefaultHost = "api.youtu.qq.com"
+	DefaultHost = "api.youtu.qq.com" //默认host
 )
 
+//应用签名鉴权
 type AppSign struct {
 	app_id     uint32 //接入优图服务时,生成的唯一id, 用于唯一标识接入业务
 	secret_id  string //标识api鉴权调用者的密钥身份
@@ -42,6 +43,7 @@ type AppSign struct {
 	user_id    string //接入业务自行定义的用户id，用于唯一标识一个用户, 登陆开发者账号的QQ号码
 }
 
+//新建应用签名
 func NewAppSign(app_id uint32, secret_id string, secret_key string, expired uint32, user_id string) (as AppSign, err error) {
 	if len(user_id) > USER_ID_MAX_LEN {
 		err = ErrUserIDTooLong
@@ -57,15 +59,17 @@ func NewAppSign(app_id uint32, secret_id string, secret_key string, expired uint
 	return
 }
 
+//Youtu，存储签名和host
 type Youtu struct {
 	app_sign AppSign
 	host     string
 }
 
-func (y *Youtu) AppId() string {
+func (y *Youtu) appId() string {
 	return strconv.Itoa(int(y.app_sign.app_id))
 }
 
+//Youtu初始化
 func Init(appSign AppSign, host string) *Youtu {
 	return &Youtu{
 		app_sign: appSign,
@@ -73,6 +77,7 @@ func Init(appSign AppSign, host string) *Youtu {
 	}
 }
 
+//检测模式，分正常和大脸
 type DetectMode int
 
 const (
@@ -143,7 +148,7 @@ type FaceCompareRsp struct {
 //计算两个Face的相似性以及五官相似度
 func (y *Youtu) FaceCompare(imageA, imageB string) (fcr FaceCompareRsp, err error) {
 	req := FaceCompareReq{
-		App_id: y.AppId(),
+		App_id: y.appId(),
 		ImageA: imageA,
 		ImageB: imageB,
 	}
@@ -168,7 +173,7 @@ type FaceVerifyRsp struct {
 //给定一个Face和一个Person，返回是否是同一个人的判断以及置信度。
 func (y *Youtu) FaceVerify(image string, persion_id string) (fvr FaceVerifyRsp, err error) {
 	req := FaceVerifyReq{
-		App_id:    y.AppId(),
+		App_id:    y.appId(),
 		Image:     image,
 		Person_id: persion_id,
 	}
@@ -194,7 +199,7 @@ type FaceIdentifyRsp struct {
 //对于一个待识别的人脸图片，在一个Group中识别出最相似的Person作为其身份返回
 func (y *Youtu) FaceIdentify(image string, group_id string) (fir FaceIdentifyRsp, err error) {
 	req := FaceIdentifyReq{
-		App_id:   y.AppId(),
+		App_id:   y.appId(),
 		Group_id: group_id,
 		Image:    image,
 	}
@@ -225,7 +230,7 @@ type NewPersonRsp struct {
 //创建一个Person，并将Person放置到group_ids指定的组当中
 func (y *Youtu) NewPerson(image string, person_id string, group_ids []string, person_name string, tag string) (npr NewPersonRsp, err error) {
 	req := NewPersonReq{
-		App_id:      y.AppId(),
+		App_id:      y.appId(),
 		Person_id:   person_id,
 		Image:       image,
 		Group_ids:   group_ids,
@@ -251,7 +256,7 @@ type DelPersonRsp struct {
 //删除一个Person
 func (y *Youtu) DelPerson(person_id string) (dpr DelPersonRsp, err error) {
 	req := DelPersonReq{
-		App_id:    y.AppId(),
+		App_id:    y.appId(),
 		Person_id: person_id,
 	}
 	err = y.interfaceRequest("delperson", req, &dpr)
@@ -277,7 +282,7 @@ type AddFaceRsp struct {
 //一个Person最多允许包含10000个Face
 func (y *Youtu) AddFace(images []string, person_id string, tag string) (afr AddFaceRsp, err error) {
 	req := AddFaceReq{
-		App_id:    y.AppId(),
+		App_id:    y.appId(),
 		Images:    images,
 		Person_id: person_id,
 		Tag:       tag,
@@ -302,7 +307,7 @@ type DelFaceRsp struct {
 //删除一个person下的face，包括特征，属性和face_id.
 func (y *Youtu) DelFace(person_id string, face_ids []string) (dfr DelFaceRsp, err error) {
 	req := DelFaceReq{
-		App_id:    y.AppId(),
+		App_id:    y.appId(),
 		Person_id: person_id,
 		Face_ids:  face_ids,
 	}
@@ -327,7 +332,7 @@ type SetInfoRsp struct {
 //设置Person的name.
 func (y *Youtu) SetInfo(person_id string, person_name string, tag string) (sir SetInfoRsp, err error) {
 	req := SetInfoReq{
-		App_id:      y.AppId(),
+		App_id:      y.appId(),
 		Person_id:   person_id,
 		Person_name: person_name,
 		Tag:         tag,
@@ -354,7 +359,7 @@ type GetInfoRsp struct {
 //获取一个Person的信息, 包括name, id, tag, 相关的face, 以及groups等信息。
 func (y *Youtu) GetInfo(person_id string) (gir GetInfoRsp, err error) {
 	req := GetInfoReq{
-		App_id:    y.AppId(),
+		App_id:    y.appId(),
 		Person_id: person_id,
 	}
 	err = y.interfaceRequest("getinfo", req, &gir)
@@ -371,10 +376,10 @@ type GetGroupIDsRsp struct {
 	Errormsg  string   `json:"errormsg"`  //返回错误消息
 }
 
-//获取一个AppId下所有group列表
+//获取一个appId下所有group列表
 func (y *Youtu) GetGroupIDs() (ggr GetGroupIDsRsp, err error) {
 	req := GetGroupIDsReq{
-		App_id: y.AppId(),
+		App_id: y.appId(),
 	}
 	err = y.interfaceRequest("getgroupids", req, &ggr)
 	return
@@ -394,7 +399,7 @@ type GetPersonIDsRsp struct {
 //获取一个组Group中所有person列表
 func (y *Youtu) GetPersonIDs(group_id string) (gpr GetPersonIDsRsp, err error) {
 	req := GetPersonIDsReq{
-		App_id:   y.AppId(),
+		App_id:   y.appId(),
 		Group_id: group_id,
 	}
 	err = y.interfaceRequest("getpersonids", req, &gpr)
@@ -415,7 +420,7 @@ type GetFaceIDsRsp struct {
 //获取一个组person中所有face列表
 func (y *Youtu) GetFaceIDs(person_id string) (gfr GetFaceIDsRsp, err error) {
 	req := GetFaceIDsReq{
-		App_id:    y.AppId(),
+		App_id:    y.appId(),
 		Person_id: person_id,
 	}
 	err = y.interfaceRequest("getfaceids", req, &gfr)
@@ -436,7 +441,7 @@ type GetFaceInfoRsp struct {
 //获取一个face的相关特征信息
 func (y *Youtu) GetFaceInfo(face_id string) (gfr GetFaceInfoRsp, err error) {
 	req := GetFaceInfoReq{
-		App_id:  y.AppId(),
+		App_id:  y.appId(),
 		Face_id: face_id,
 	}
 	err = y.interfaceRequest("getfaceinfo", req, &gfr)
