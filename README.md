@@ -1,5 +1,5 @@
 ##youtu
-`youtu`是http://open.youtu.qq.com提供接口的Go实现版本
+`youtu`是http://open.youtu.qq.com 提供接口的Go实现版本
 
 
 ### 下载:
@@ -9,11 +9,11 @@ go get https://github.com/ochapman/youtu
 ```
 
 ### 使用:
-1. 到http://open.youtu.qq.com注册成为开发者
+1. 到http://open.youtu.qq.com 注册成为开发者
 2. 注册应用，获取开发者密钥
 
 ### 使用例子:
-看youtu_test.go文件
+
 ```go
 package main
 
