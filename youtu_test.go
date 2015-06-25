@@ -18,8 +18,9 @@ var as = AppSign{
 	userID:    "your_qq_id",
 }
 
+var yt = Init(as, DefaultHost)
+
 func TestDetectFace(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	imgData, err := EncodeImage("testdata/imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s", err)
@@ -34,7 +35,6 @@ func TestDetectFace(t *testing.T) {
 }
 
 func TestFaceCompare(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	imageA, err := EncodeImage("testdata/imageA.jpg")
 	if err != nil {
 		t.Errorf("Encode imageA failed: %s\n", err)
@@ -54,7 +54,6 @@ func TestFaceCompare(t *testing.T) {
 }
 
 func TestFaceVerify(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	image, err := EncodeImage("testdata/imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s\n", err)
@@ -70,7 +69,6 @@ func TestFaceVerify(t *testing.T) {
 }
 
 func TestFaceIdentify(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	image, err := EncodeImage("testdata/imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s\n", err)
@@ -86,7 +84,6 @@ func TestFaceIdentify(t *testing.T) {
 }
 
 func TestNewPerson(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	image, err := EncodeImage("testdata/imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s\n", err)
@@ -102,7 +99,6 @@ func TestNewPerson(t *testing.T) {
 }
 
 func TestDelPerson(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	dpr, err := yt.DelPerson("ochapman")
 	if err != nil {
 		t.Errorf("DelPerson failed: %s\n", err)
@@ -112,7 +108,6 @@ func TestDelPerson(t *testing.T) {
 }
 
 func TestAddFace(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	image, err := EncodeImage("testdata/imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s\n", err)
@@ -130,7 +125,6 @@ func TestAddFace(t *testing.T) {
 }
 
 func TestDelFace(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	person_id := "ochapman"
 	face_ids := []string{"123456"}
 	dfr, err := yt.DelFace(person_id, face_ids)
@@ -142,7 +136,6 @@ func TestDelFace(t *testing.T) {
 }
 
 func TestSetInfo(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	person_id := "ochapman"
 	person_name := "ochapman_new"
 	tag := "SetInfo tag"
@@ -155,7 +148,6 @@ func TestSetInfo(t *testing.T) {
 }
 
 func TestGetInfo(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	person_id := "ochapman"
 	gir, err := yt.GetInfo(person_id)
 	if err != nil {
@@ -166,7 +158,6 @@ func TestGetInfo(t *testing.T) {
 }
 
 func TestGetGroupIDs(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	ggr, err := yt.GetGroupIDs()
 	if err != nil {
 		t.Errorf("GetGroupIDs failed: %s\n", err)
@@ -177,7 +168,6 @@ func TestGetGroupIDs(t *testing.T) {
 }
 
 func TestGetPersonIDs(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	gpr, err := yt.GetPersonIDs("12345")
 	if err != nil {
 		t.Errorf("GetPersonIDs failed: %s\n", err)
@@ -187,7 +177,6 @@ func TestGetPersonIDs(t *testing.T) {
 }
 
 func TestGetFaceIDs(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	gfr, err := yt.GetFaceIDs("12345")
 	if err != nil {
 		t.Errorf("GetFaceIDs failed: %s\n", err)
@@ -197,7 +186,6 @@ func TestGetFaceIDs(t *testing.T) {
 }
 
 func TestGetFaceInfo(t *testing.T) {
-	yt := Init(as, DefaultHost)
 	gfr, err := yt.GetFaceInfo("12345")
 	if err != nil {
 		t.Errorf("GetFaceInfo failed: %s\n", err)
