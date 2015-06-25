@@ -11,11 +11,11 @@ import "testing"
 
 //Update as if you want to test your own app
 var as = AppSign{
-	app_id:     12345678,
-	secret_id:  "your_secret_id",
-	secret_key: "your_secret_key",
-	expired:    1436353609,
-	user_id:    "your_qq_id",
+	appID:     12345678,
+	secretID:  "your_secret_id",
+	secretKey: "your_secret_key",
+	expired:   1436353609,
+	userID:    "your_qq_id",
 }
 
 func TestDetectFace(t *testing.T) {
@@ -25,7 +25,7 @@ func TestDetectFace(t *testing.T) {
 		t.Errorf("EncodeImage failed: %s", err)
 		return
 	}
-	dfr, err := yt.DetectFace(imgData, DetectMode_Normal)
+	dfr, err := yt.DetectFace(imgData, DetectModeNormal)
 	if err != nil {
 		t.Errorf("Detect face faild: %s", err)
 		return
@@ -94,7 +94,7 @@ func TestNewPerson(t *testing.T) {
 	}
 	group_ids := []string{"tencent"}
 	npr, err := yt.NewPerson(image, "ochapman", group_ids, "ochapman", "person tag")
-	if err != nil && npr.Errormsg != "ERROR_PERSON_EXISTED" {
+	if err != nil && npr.ErrorMsg != "ERROR_PERSON_EXISTED" {
 		t.Errorf("NewPerson failed: %s\n", err)
 		return
 	}
