@@ -59,8 +59,8 @@ func TestFaceVerify(t *testing.T) {
 		t.Errorf("EncodeImage failed: %s\n", err)
 		return
 	}
-	person_id := "1045684262752288767"
-	fvr, err := yt.FaceVerify(image, person_id)
+	personID := "1045684262752288767"
+	fvr, err := yt.FaceVerify(image, personID)
 	if err != nil {
 		t.Errorf("FaceVerify failed: %s\n", err)
 		return
@@ -74,8 +74,8 @@ func TestFaceIdentify(t *testing.T) {
 		t.Errorf("EncodeImage failed: %s\n", err)
 		return
 	}
-	group_id := "tencent"
-	fir, err := yt.FaceIdentify(image, group_id)
+	groupID := "tencent"
+	fir, err := yt.FaceIdentify(image, groupID)
 	if err != nil {
 		t.Errorf("FaceIdentify failed: %s\n", err)
 		return
@@ -89,8 +89,8 @@ func TestNewPerson(t *testing.T) {
 		t.Errorf("EncodeImage failed: %s\n", err)
 		return
 	}
-	group_ids := []string{"tencent"}
-	npr, err := yt.NewPerson(image, "ochapman", group_ids, "ochapman", "person tag")
+	groupIDs := []string{"tencent"}
+	npr, err := yt.NewPerson(image, "ochapman", groupIDs, "ochapman", "person tag")
 	if err != nil && npr.ErrorMsg != "ERROR_PERSON_EXISTED" {
 		t.Errorf("NewPerson failed: %s\n", err)
 		return
@@ -113,10 +113,10 @@ func TestAddFace(t *testing.T) {
 		t.Errorf("EncodeImage failed: %s\n", err)
 		return
 	}
-	person_id := "ochapman"
+	personID := "ochapman"
 	images := []string{image}
 	tag := "face tag"
-	afr, err := yt.AddFace(images, person_id, tag)
+	afr, err := yt.AddFace(images, personID, tag)
 	if err != nil {
 		t.Errorf("AddFace failed: %s\n", err)
 		return
@@ -125,9 +125,9 @@ func TestAddFace(t *testing.T) {
 }
 
 func TestDelFace(t *testing.T) {
-	person_id := "ochapman"
-	face_ids := []string{"123456"}
-	dfr, err := yt.DelFace(person_id, face_ids)
+	personID := "ochapman"
+	faceIDs := []string{"123456"}
+	dfr, err := yt.DelFace(personID, faceIDs)
 	if err != nil {
 		t.Errorf("DelFace failed: %s\n", err)
 		return
@@ -136,10 +136,10 @@ func TestDelFace(t *testing.T) {
 }
 
 func TestSetInfo(t *testing.T) {
-	person_id := "ochapman"
-	person_name := "ochapman_new"
+	personID := "ochapman"
+	personName := "ochapman_new"
 	tag := "SetInfo tag"
-	sir, err := yt.SetInfo(person_id, person_name, tag)
+	sir, err := yt.SetInfo(personID, personName, tag)
 	if err != nil {
 		t.Errorf("SetInfo failed: %s\n", err)
 		return
@@ -148,8 +148,8 @@ func TestSetInfo(t *testing.T) {
 }
 
 func TestGetInfo(t *testing.T) {
-	person_id := "ochapman"
-	gir, err := yt.GetInfo(person_id)
+	personID := "ochapman"
+	gir, err := yt.GetInfo(personID)
 	if err != nil {
 		t.Errorf("GetInfo failed: %s\n", err)
 		return
