@@ -529,7 +529,7 @@ func (y *Youtu) sign() string {
 
 func (y *Youtu) get(addr string, req string) (rsp []byte, err error) {
 	client := &http.Client{
-		Timeout: time.Duration(20 * time.Second),
+		Timeout: time.Duration(5 * time.Second),
 	}
 	httpreq, err := http.NewRequest("POST", addr, strings.NewReader(req))
 	if err != nil {
