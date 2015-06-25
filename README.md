@@ -27,13 +27,13 @@ import (
 func main() {
 	//Register your app on http://open.youtu.qq.com
 	//Get the following details
-	app_id := uint32(12345678)
-	secret_id := "your_secret_id"
-	secret_key := "your_secret_key"
+	appID := uint32(12345678)
+	secretID := "your_secret_id"
+	secretKey := "your_secret_key"
 	expired := uint32(1436353609)
-	user_id := "your_qq_id"
+	userID := "your_qq_id"
 
-	as, err := youtu.NewAppSign(app_id, secret_id, secret_key, expired, user_id)
+	as, err := youtu.NewAppSign(appID, secretID, secretKey, expired, userID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAppSign() failed: %s\n", err)
 		return
@@ -45,7 +45,7 @@ func main() {
 	}
 
 	yt := youtu.Init(as, youtu.DefaultHost)
-	df, err := yt.DetectFace(imgData, youtu.DetectMode_Normal)
+	df, err := yt.DetectFace(imgData, youtu.DetectModeNormal)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "DetectFace() failed: %s", err)
 		return
