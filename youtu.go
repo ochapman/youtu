@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	//UserIDMaxLen 用户ID灯最大长度
+	//UserIDMaxLen 用户ID的最大长度
 	UserIDMaxLen = 110
 )
 
