@@ -18,10 +18,12 @@ var as = AppSign{
 	userID:    "your_qq_id",
 }
 
+const testDataDir = "../testdata/"
+
 var yt = Init(as, DefaultHost)
 
 func TestDetectFace(t *testing.T) {
-	imgData, err := EncodeImage("testdata/imageA.jpg")
+	imgData, err := EncodeImage(testDataDir + "imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s", err)
 		return
@@ -35,12 +37,12 @@ func TestDetectFace(t *testing.T) {
 }
 
 func TestFaceCompare(t *testing.T) {
-	imageA, err := EncodeImage("testdata/imageA.jpg")
+	imageA, err := EncodeImage(testDataDir + "imageA.jpg")
 	if err != nil {
 		t.Errorf("Encode imageA failed: %s\n", err)
 		return
 	}
-	imageB, err := EncodeImage("testdata/imageB.jpg")
+	imageB, err := EncodeImage(testDataDir + "imageB.jpg")
 	if err != nil {
 		t.Errorf("Encode imageB failed: %s\n", err)
 		return
@@ -54,7 +56,7 @@ func TestFaceCompare(t *testing.T) {
 }
 
 func TestFaceVerify(t *testing.T) {
-	image, err := EncodeImage("testdata/imageA.jpg")
+	image, err := EncodeImage(testDataDir + "imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s\n", err)
 		return
@@ -69,7 +71,7 @@ func TestFaceVerify(t *testing.T) {
 }
 
 func TestFaceIdentify(t *testing.T) {
-	image, err := EncodeImage("testdata/imageA.jpg")
+	image, err := EncodeImage(testDataDir + "imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s\n", err)
 		return
@@ -84,7 +86,7 @@ func TestFaceIdentify(t *testing.T) {
 }
 
 func TestNewPerson(t *testing.T) {
-	image, err := EncodeImage("testdata/imageA.jpg")
+	image, err := EncodeImage(testDataDir + "imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s\n", err)
 		return
@@ -108,7 +110,7 @@ func TestDelPerson(t *testing.T) {
 }
 
 func TestAddFace(t *testing.T) {
-	image, err := EncodeImage("testdata/imageA.jpg")
+	image, err := EncodeImage(testDataDir + "imageA.jpg")
 	if err != nil {
 		t.Errorf("EncodeImage failed: %s\n", err)
 		return
