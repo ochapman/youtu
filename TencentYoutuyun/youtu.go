@@ -67,6 +67,7 @@ func NewAppSign(appID uint32, secretID string, secretKey string, userID string) 
 type Youtu struct {
 	appSign AppSign
 	host    string
+	debug   bool //Default false
 }
 
 func (y *Youtu) appID() string {
@@ -78,6 +79,7 @@ func Init(appSign AppSign, host string) *Youtu {
 	return &Youtu{
 		appSign: appSign,
 		host:    host,
+		debug:   false,
 	}
 }
 
@@ -122,6 +124,10 @@ type DetectFaceRsp struct {
 	Face        []Face `json:"face"`         //被检测出的人脸Face的列表
 	ErrorCode   int    `json:"errorcode"`    //返回状态值
 	ErrorMsg    string `json:"errormsg"`     //返回错误消息
+}
+
+func (y *Youtu) SetDebug(isDebug bool) {
+	y.debug = isDebug
 }
 
 //DetectFace 检测给定图片(Image)中的所有人脸(Face)的位置和相应的面部属性。
@@ -475,7 +481,9 @@ func (y *Youtu) interfaceURL(ifname string) string {
 
 func (y *Youtu) interfaceRequest(ifname string, req, rsp interface{}) (err error) {
 	url := y.interfaceURL(ifname)
-	//fmt.Printf("req: %#v\n", req)
+	if y.debug {
+		fmt.Printf("req: %#v\n", req)
+	}
 	data, err := json.Marshal(req)
 	if err != nil {
 		return
@@ -486,7 +494,9 @@ func (y *Youtu) interfaceRequest(ifname string, req, rsp interface{}) (err error
 	}
 	err = json.Unmarshal(body, &rsp)
 	if err != nil {
-		//fmt.Fprintf(os.Stderr, "body:%s\n", string(body))
+		if y.debug {
+			fmt.Fprintf(os.Stderr, "body:%s\n", string(body))
+		}
 		return fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
 	}
 	return
@@ -497,13 +507,18 @@ func (y *Youtu) orignalSign() string {
 	now := time.Now().Unix()
 	rand.Seed(int64(now))
 	rnd := rand.Int31()
-	return fmt.Sprintf("a=%d&k=%s&e=%d&t=%d&r=%d&u=%s&f=",
+	sign := fmt.Sprintf("a=%d&k=%s&e=%d&t=%d&r=%d&u=%s&f=",
 		as.appID,
 		as.secretID,
 		now+expiredInterval,
 		now,
 		rnd,
 		as.userID)
+
+	if y.debug {
+		fmt.Printf("orignal sign: %s\n", sign)
+	}
+	return sign
 }
 
 //EncodeImage 图片文件编码
@@ -518,7 +533,6 @@ func EncodeImage(file string) (imgData string, err error) {
 
 func (y *Youtu) sign() string {
 	origSign := y.orignalSign()
-	fmt.Printf("origSign: %s\n", origSign)
 	h := hmac.New(sha1.New, []byte(y.appSign.secretKey))
 	h.Write([]byte(origSign))
 	hm := h.Sum(nil)
@@ -537,7 +551,9 @@ func (y *Youtu) get(addr string, req string) (rsp []byte, err error) {
 		return
 	}
 	auth := y.sign()
-	fmt.Fprintf(os.Stderr, "Authorization: %s\n", auth)
+	if y.debug {
+		fmt.Fprintf(os.Stderr, "Authorization: %s\n", auth)
+	}
 	httpreq.Header.Add("Authorization", auth)
 	httpreq.Header.Add("Content-Type", "text/json")
 	httpreq.Header.Add("User-Agent", "")
