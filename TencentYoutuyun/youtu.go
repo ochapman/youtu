@@ -17,6 +17,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -26,6 +27,8 @@ const (
 	//UserIDMaxLen 用户ID的最大长度
 	UserIDMaxLen = 110
 )
+
+const expiredInterval = 1000
 
 var (
 	//ErrUserIDTooLong 用户ID过长错误
@@ -42,12 +45,11 @@ type AppSign struct {
 	appID     uint32 //接入优图服务时,生成的唯一id, 用于唯一标识接入业务
 	secretID  string //标识api鉴权调用者的密钥身份
 	secretKey string //用于加密签名字符串和服务器端验证签名字符串的密钥，secret_key 必须严格保管避免泄露
-	expired   uint32 //此签名的凭证有效期，是一个符合UNIX Epoch时间戳规范的数值，单位为秒, e应大于t, 生成的签名在 t 到 e 的时间内 都是有效的. 如果是0, 则生成的签名只有再t的时刻是有效的
 	userID    string //接入业务自行定义的用户id，用于唯一标识一个用户, 登陆开发者账号的QQ号码
 }
 
 //NewAppSign 新建应用签名
-func NewAppSign(appID uint32, secretID string, secretKey string, expired uint32, userID string) (as AppSign, err error) {
+func NewAppSign(appID uint32, secretID string, secretKey string, userID string) (as AppSign, err error) {
 	if len(userID) > UserIDMaxLen {
 		err = ErrUserIDTooLong
 		return
@@ -56,7 +58,6 @@ func NewAppSign(appID uint32, secretID string, secretKey string, expired uint32,
 		appID:     appID,
 		secretID:  secretID,
 		secretKey: secretKey,
-		expired:   expired,
 		userID:    userID,
 	}
 	return
@@ -483,12 +484,11 @@ func (y *Youtu) interfaceRequest(ifname string, req, rsp interface{}) (err error
 	if err != nil {
 		return
 	}
-	//fmt.Println("body: ", string(body))
 	err = json.Unmarshal(body, &rsp)
 	if err != nil {
+		//fmt.Fprintf(os.Stderr, "body:%s\n", string(body))
 		return fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
 	}
-	//fmt.Printf("rsp: %#v\n", rsp)
 	return
 }
 
@@ -500,7 +500,7 @@ func (y *Youtu) orignalSign() string {
 	return fmt.Sprintf("a=%d&k=%s&e=%d&t=%d&r=%d&u=%s&f=",
 		as.appID,
 		as.secretID,
-		as.expired,
+		now+expiredInterval,
 		now,
 		rnd,
 		as.userID)
@@ -518,6 +518,7 @@ func EncodeImage(file string) (imgData string, err error) {
 
 func (y *Youtu) sign() string {
 	origSign := y.orignalSign()
+	fmt.Printf("origSign: %s\n", origSign)
 	h := hmac.New(sha1.New, []byte(y.appSign.secretKey))
 	h.Write([]byte(origSign))
 	hm := h.Sum(nil)
@@ -535,7 +536,9 @@ func (y *Youtu) get(addr string, req string) (rsp []byte, err error) {
 	if err != nil {
 		return
 	}
-	httpreq.Header.Add("Authorization", y.sign())
+	auth := y.sign()
+	fmt.Fprintf(os.Stderr, "Authorization: %s\n", auth)
+	httpreq.Header.Add("Authorization", auth)
 	httpreq.Header.Add("Content-Type", "text/json")
 	httpreq.Header.Add("User-Agent", "")
 	httpreq.Header.Add("Accept", "*/*")

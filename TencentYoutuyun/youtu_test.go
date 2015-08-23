@@ -11,11 +11,11 @@ import "testing"
 
 //Update as if you want to test your own app
 var as = AppSign{
-	appID:     12345678,
-	secretID:  "your_secret_id",
-	secretKey: "your_secret_key",
-	expired:   1436353609,
-	userID:    "your_qq_id",
+	appID:     1000061,
+	secretID:  "AKID4Bhs9vqYT6mHa9TkIrAe7w5oijOCEjql",
+	secretKey: "P2VTKNvTAnYNwBrqXbgxRSFQs6FTEhNJ",
+	//expired:   1440207436 + 5000,
+	userID: "3041722595",
 }
 
 const testDataDir = "../testdata/"
