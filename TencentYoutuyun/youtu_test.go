@@ -7,7 +7,10 @@
 
 package youtu
 
-import "testing"
+import (
+	"io/ioutil"
+	"testing"
+)
 
 //Update as if you want to test your own app
 var as = AppSign{
@@ -23,9 +26,9 @@ const testDataDir = "../testdata/"
 var yt = Init(as, DefaultHost)
 
 func TestDetectFace(t *testing.T) {
-	imgData, err := EncodeImage(testDataDir + "imageA.jpg")
+	imgData, err := ioutil.ReadFile(testDataDir + "imageA.jpg")
 	if err != nil {
-		t.Errorf("EncodeImage failed: %s", err)
+		t.Errorf("ReadFile failed: %s", err)
 		return
 	}
 	dfr, err := yt.DetectFace(imgData, DetectModeNormal)
@@ -37,12 +40,12 @@ func TestDetectFace(t *testing.T) {
 }
 
 func TestFaceCompare(t *testing.T) {
-	imageA, err := EncodeImage(testDataDir + "imageA.jpg")
+	imageA, err := ioutil.ReadFile(testDataDir + "imageA.jpg")
 	if err != nil {
 		t.Errorf("Encode imageA failed: %s\n", err)
 		return
 	}
-	imageB, err := EncodeImage(testDataDir + "imageB.jpg")
+	imageB, err := ioutil.ReadFile(testDataDir + "imageB.jpg")
 	if err != nil {
 		t.Errorf("Encode imageB failed: %s\n", err)
 		return
@@ -56,13 +59,13 @@ func TestFaceCompare(t *testing.T) {
 }
 
 func TestFaceVerify(t *testing.T) {
-	image, err := EncodeImage(testDataDir + "imageA.jpg")
+	image, err := ioutil.ReadFile(testDataDir + "imageA.jpg")
 	if err != nil {
-		t.Errorf("EncodeImage failed: %s\n", err)
+		t.Errorf("ioutil.ReadFile failed: %s\n", err)
 		return
 	}
 	personID := "1045684262752288767"
-	fvr, err := yt.FaceVerify(image, personID)
+	fvr, err := yt.FaceVerify(personID, image)
 	if err != nil {
 		t.Errorf("FaceVerify failed: %s\n", err)
 		return
@@ -71,13 +74,13 @@ func TestFaceVerify(t *testing.T) {
 }
 
 func TestFaceIdentify(t *testing.T) {
-	image, err := EncodeImage(testDataDir + "imageA.jpg")
+	image, err := ioutil.ReadFile(testDataDir + "imageA.jpg")
 	if err != nil {
-		t.Errorf("EncodeImage failed: %s\n", err)
+		t.Errorf("ioutil.ReadFile failed: %s\n", err)
 		return
 	}
 	groupID := "tencent"
-	fir, err := yt.FaceIdentify(image, groupID)
+	fir, err := yt.FaceIdentify(groupID, image)
 	if err != nil {
 		t.Errorf("FaceIdentify failed: %s\n", err)
 		return
@@ -86,13 +89,13 @@ func TestFaceIdentify(t *testing.T) {
 }
 
 func TestNewPerson(t *testing.T) {
-	image, err := EncodeImage(testDataDir + "imageA.jpg")
+	image, err := ioutil.ReadFile(testDataDir + "imageA.jpg")
 	if err != nil {
-		t.Errorf("EncodeImage failed: %s\n", err)
+		t.Errorf("ioutil.ReadFile failed: %s\n", err)
 		return
 	}
 	groupIDs := []string{"tencent"}
-	npr, err := yt.NewPerson(image, "ochapman", groupIDs, "ochapman", "person tag")
+	npr, err := yt.NewPerson("ochapman", "ochapman", groupIDs, image, "person tag")
 	if err != nil && npr.ErrorMsg != "ERROR_PERSON_EXISTED" {
 		t.Errorf("NewPerson failed: %s\n", err)
 		return
@@ -110,15 +113,15 @@ func TestDelPerson(t *testing.T) {
 }
 
 func TestAddFace(t *testing.T) {
-	image, err := EncodeImage(testDataDir + "imageA.jpg")
+	image, err := ioutil.ReadFile(testDataDir + "imageA.jpg")
 	if err != nil {
-		t.Errorf("EncodeImage failed: %s\n", err)
+		t.Errorf("ioutil.ReadFile failed: %s\n", err)
 		return
 	}
 	personID := "ochapman"
-	images := []string{image}
+	images := [][]byte{image}
 	tag := "face tag"
-	afr, err := yt.AddFace(images, personID, tag)
+	afr, err := yt.AddFace(personID, images, tag)
 	if err != nil {
 		t.Errorf("AddFace failed: %s\n", err)
 		return
