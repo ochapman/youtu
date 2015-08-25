@@ -31,12 +31,12 @@ func TestDetectFace(t *testing.T) {
 		t.Errorf("ReadFile failed: %s", err)
 		return
 	}
-	dfr, err := yt.DetectFace(imgData, DetectModeNormal)
+	rsp, err := yt.DetectFace(imgData, DetectModeNormal)
 	if err != nil {
 		t.Errorf("Detect face faild: %s", err)
 		return
 	}
-	t.Logf("dfr: %#v\n", dfr)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestFaceShape(t *testing.T) {
@@ -64,12 +64,12 @@ func TestFaceCompare(t *testing.T) {
 		t.Errorf("Encode imageB failed: %s\n", err)
 		return
 	}
-	fcr, err := yt.FaceCompare(imageA, imageB)
+	rsp, err := yt.FaceCompare(imageA, imageB)
 	if err != nil {
 		t.Errorf("FaceCompare failed: %s\n", err)
 		return
 	}
-	t.Logf("fcr: %#v\n", fcr)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestFaceVerify(t *testing.T) {
@@ -79,12 +79,12 @@ func TestFaceVerify(t *testing.T) {
 		return
 	}
 	personID := "1045684262752288767"
-	fvr, err := yt.FaceVerify(personID, image)
+	rsp, err := yt.FaceVerify(personID, image)
 	if err != nil {
 		t.Errorf("FaceVerify failed: %s\n", err)
 		return
 	}
-	t.Logf("fvr: %#v\n", fvr)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestFaceIdentify(t *testing.T) {
@@ -94,12 +94,12 @@ func TestFaceIdentify(t *testing.T) {
 		return
 	}
 	groupID := "tencent"
-	fir, err := yt.FaceIdentify(groupID, image)
+	rsp, err := yt.FaceIdentify(groupID, image)
 	if err != nil {
 		t.Errorf("FaceIdentify failed: %s\n", err)
 		return
 	}
-	t.Logf("fir: %#v\n", fir)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestNewPerson(t *testing.T) {
@@ -109,21 +109,21 @@ func TestNewPerson(t *testing.T) {
 		return
 	}
 	groupIDs := []string{"tencent"}
-	npr, err := yt.NewPerson("ochapman", "ochapman", groupIDs, image, "person tag")
-	if err != nil && npr.ErrorMsg != "ERROR_PERSON_EXISTED" {
+	rsp, err := yt.NewPerson("ochapman", "ochapman", groupIDs, image, "person tag")
+	if err != nil && rsp.ErrorMsg != "ERROR_PERSON_EXISTED" {
 		t.Errorf("NewPerson failed: %s\n", err)
 		return
 	}
-	t.Logf("npr: %#v\n", npr)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestDelPerson(t *testing.T) {
-	dpr, err := yt.DelPerson("ochapman")
+	rsp, err := yt.DelPerson("ochapman")
 	if err != nil {
 		t.Errorf("DelPerson failed: %s\n", err)
 		return
 	}
-	t.Logf("dpr: %#v\n", dpr)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestAddFace(t *testing.T) {
@@ -135,80 +135,80 @@ func TestAddFace(t *testing.T) {
 	personID := "ochapman"
 	images := [][]byte{image}
 	tag := "face tag"
-	afr, err := yt.AddFace(personID, images, tag)
+	rsp, err := yt.AddFace(personID, images, tag)
 	if err != nil {
 		t.Errorf("AddFace failed: %s\n", err)
 		return
 	}
-	t.Logf("afr: %#v\n", afr)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestDelFace(t *testing.T) {
 	personID := "ochapman"
 	faceIDs := []string{"123456"}
-	dfr, err := yt.DelFace(personID, faceIDs)
+	rsp, err := yt.DelFace(personID, faceIDs)
 	if err != nil {
 		t.Errorf("DelFace failed: %s\n", err)
 		return
 	}
-	t.Logf("dfr: %#v\n", dfr)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestSetInfo(t *testing.T) {
 	personID := "ochapman"
 	personName := "ochapman_new"
 	tag := "SetInfo tag"
-	sir, err := yt.SetInfo(personID, personName, tag)
+	rsp, err := yt.SetInfo(personID, personName, tag)
 	if err != nil {
 		t.Errorf("SetInfo failed: %s\n", err)
 		return
 	}
-	t.Logf("sir: %#v\n", sir)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestGetInfo(t *testing.T) {
 	personID := "ochapman"
-	gir, err := yt.GetInfo(personID)
+	rsp, err := yt.GetInfo(personID)
 	if err != nil {
 		t.Errorf("GetInfo failed: %s\n", err)
 		return
 	}
-	t.Logf("sir %#v\n", gir)
+	t.Logf("rsp %#v\n", rsp)
 }
 
 func TestGetGroupIDs(t *testing.T) {
-	ggr, err := yt.GetGroupIDs()
+	rsp, err := yt.GetGroupIDs()
 	if err != nil {
 		t.Errorf("GetGroupIDs failed: %s\n", err)
 		return
 	}
-	t.Logf("ggr %#v\n", ggr)
+	t.Logf("rsp %#v\n", rsp)
 
 }
 
 func TestGetPersonIDs(t *testing.T) {
-	gpr, err := yt.GetPersonIDs("12345")
+	rsp, err := yt.GetPersonIDs("12345")
 	if err != nil {
 		t.Errorf("GetPersonIDs failed: %s\n", err)
 		return
 	}
-	t.Logf("gpr: %#v\n", gpr)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestGetFaceIDs(t *testing.T) {
-	gfr, err := yt.GetFaceIDs("12345")
+	rsp, err := yt.GetFaceIDs("12345")
 	if err != nil {
 		t.Errorf("GetFaceIDs failed: %s\n", err)
 		return
 	}
-	t.Logf("gfr: %#v\n", gfr)
+	t.Logf("rsp: %#v\n", rsp)
 }
 
 func TestGetFaceInfo(t *testing.T) {
-	gfr, err := yt.GetFaceInfo("12345")
+	rsp, err := yt.GetFaceInfo("12345")
 	if err != nil {
 		t.Errorf("GetFaceInfo failed: %s\n", err)
 		return
 	}
-	t.Logf("gfr: %#v\n", gfr)
+	t.Logf("rsp: %#v\n", rsp)
 }

@@ -123,14 +123,14 @@ type DetectFaceRsp struct {
 //DetectFace 检测给定图片(Image)中的所有人脸(Face)的位置和相应的面部属性。
 //位置包括(x, y, w, h)，面部属性包括性别(gender), 年龄(age),
 //表情(expression), 眼镜(glass)和姿态(pitch，roll，yaw).
-func (y *Youtu) DetectFace(imageData []byte, mode DetectMode) (dfr DetectFaceRsp, err error) {
+func (y *Youtu) DetectFace(imageData []byte, mode DetectMode) (rsp DetectFaceRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(imageData)
 	req := detectFaceReq{
 		AppID: strconv.Itoa(int(y.appSign.appID)),
 		Image: b64Image,
 		Mode:  mode,
 	}
-	err = y.interfaceRequest("detectface", req, &dfr)
+	err = y.interfaceRequest("detectface", req, &rsp)
 	return
 }
 
@@ -165,14 +165,14 @@ type FaceShapeRsp struct {
 	ErrorMsg    string      `json:"errormsg"`     //返回错误消息
 }
 
-func (y *Youtu) FaceShape(image []byte, mode DetectMode) (fsr FaceShapeRsp, err error) {
+func (y *Youtu) FaceShape(image []byte, mode DetectMode) (rsp FaceShapeRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(image)
 	req := faceShapeReq{
 		AppID: strconv.Itoa(int(y.appSign.appID)),
 		Image: b64Image,
 		Mode:  mode,
 	}
-	err = y.interfaceRequest("faceshape", req, &fsr)
+	err = y.interfaceRequest("faceshape", req, &rsp)
 	return
 }
 
@@ -194,7 +194,7 @@ type FaceCompareRsp struct {
 }
 
 //FaceCompare 计算两个Face的相似性以及五官相似度
-func (y *Youtu) FaceCompare(imageA, imageB []byte) (fcr FaceCompareRsp, err error) {
+func (y *Youtu) FaceCompare(imageA, imageB []byte) (rsp FaceCompareRsp, err error) {
 	b64ImageA := base64.StdEncoding.EncodeToString(imageA)
 	b64ImageB := base64.StdEncoding.EncodeToString(imageB)
 	req := faceCompareReq{
@@ -202,7 +202,7 @@ func (y *Youtu) FaceCompare(imageA, imageB []byte) (fcr FaceCompareRsp, err erro
 		ImageA: b64ImageA,
 		ImageB: b64ImageB,
 	}
-	err = y.interfaceRequest("facecompare", req, &fcr)
+	err = y.interfaceRequest("facecompare", req, &rsp)
 	return
 }
 
@@ -222,14 +222,14 @@ type FaceVerifyRsp struct {
 }
 
 //FaceVerify 给定一个Face和一个Person，返回是否是同一个人的判断以及置信度。
-func (y *Youtu) FaceVerify(personID string, image []byte) (fvr FaceVerifyRsp, err error) {
+func (y *Youtu) FaceVerify(personID string, image []byte) (rsp FaceVerifyRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(image)
 	req := faceVerifyReq{
 		AppID:    y.appID(),
 		Image:    b64Image,
 		PersonID: personID,
 	}
-	err = y.interfaceRequest("faceverify", req, &fvr)
+	err = y.interfaceRequest("faceverify", req, &rsp)
 	return
 }
 
@@ -250,14 +250,14 @@ type FaceIdentifyRsp struct {
 }
 
 //FaceIdentify 对于一个待识别的人脸图片，在一个Group中识别出最相似的Person作为其身份返回
-func (y *Youtu) FaceIdentify(groupID string, image []byte) (fir FaceIdentifyRsp, err error) {
+func (y *Youtu) FaceIdentify(groupID string, image []byte) (rsp FaceIdentifyRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(image)
 	req := faceIdentifyReq{
 		AppID:   y.appID(),
 		GroupID: groupID,
 		Image:   b64Image,
 	}
-	err = y.interfaceRequest("faceidentify", req, &fir)
+	err = y.interfaceRequest("faceidentify", req, &rsp)
 	return
 }
 
@@ -283,7 +283,7 @@ type NewPersonRsp struct {
 }
 
 //NewPerson 创建一个Person，并将Person放置到group_ids指定的组当中
-func (y *Youtu) NewPerson(personID string, personName string, groupIDs []string, image []byte, tag string) (npr NewPersonRsp, err error) {
+func (y *Youtu) NewPerson(personID string, personName string, groupIDs []string, image []byte, tag string) (rsp NewPersonRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(image)
 	req := newPersonReq{
 		AppID:      y.appID(),
@@ -293,7 +293,7 @@ func (y *Youtu) NewPerson(personID string, personName string, groupIDs []string,
 		PersonName: personName,
 		Tag:        tag,
 	}
-	err = y.interfaceRequest("newperson", req, &npr)
+	err = y.interfaceRequest("newperson", req, &rsp)
 	return
 }
 
@@ -311,12 +311,12 @@ type DelPersonRsp struct {
 }
 
 //DelPerson 删除一个Person
-func (y *Youtu) DelPerson(personID string) (dpr DelPersonRsp, err error) {
+func (y *Youtu) DelPerson(personID string) (rsp DelPersonRsp, err error) {
 	req := delPersonReq{
 		AppID:    y.appID(),
 		PersonID: personID,
 	}
-	err = y.interfaceRequest("delperson", req, &dpr)
+	err = y.interfaceRequest("delperson", req, &rsp)
 	return
 }
 
@@ -338,7 +338,7 @@ type AddFaceRsp struct {
 
 //AddFace 将一组Face加入到一个Person中。注意，一个Face只能被加入到一个Person中。
 //一个Person最多允许包含10000个Face
-func (y *Youtu) AddFace(personID string, images [][]byte, tag string) (afr AddFaceRsp, err error) {
+func (y *Youtu) AddFace(personID string, images [][]byte, tag string) (rsp AddFaceRsp, err error) {
 	b64Images := make([]string, len(images))
 	for i, img := range images {
 		b64Images[i] = base64.StdEncoding.EncodeToString([]byte(img))
@@ -349,7 +349,7 @@ func (y *Youtu) AddFace(personID string, images [][]byte, tag string) (afr AddFa
 		PersonID: personID,
 		Tag:      tag,
 	}
-	err = y.interfaceRequest("addface", req, &afr)
+	err = y.interfaceRequest("addface", req, &rsp)
 	return
 }
 
@@ -368,13 +368,13 @@ type DelFaceRsp struct {
 }
 
 //DelFace 删除一个person下的face，包括特征，属性和face_id.
-func (y *Youtu) DelFace(personID string, faceIDs []string) (dfr DelFaceRsp, err error) {
+func (y *Youtu) DelFace(personID string, faceIDs []string) (rsp DelFaceRsp, err error) {
 	req := delFaceReq{
 		AppID:    y.appID(),
 		PersonID: personID,
 		FaceIDs:  faceIDs,
 	}
-	err = y.interfaceRequest("delface", req, &dfr)
+	err = y.interfaceRequest("delface", req, &rsp)
 	return
 }
 
@@ -394,14 +394,14 @@ type SetInfoRsp struct {
 }
 
 //SetInfo 设置Person的name.
-func (y *Youtu) SetInfo(personID string, personName string, tag string) (sir SetInfoRsp, err error) {
+func (y *Youtu) SetInfo(personID string, personName string, tag string) (rsp SetInfoRsp, err error) {
 	req := setInfoReq{
 		AppID:      y.appID(),
 		PersonID:   personID,
 		PersonName: personName,
 		Tag:        tag,
 	}
-	err = y.interfaceRequest("setinfo", req, &sir)
+	err = y.interfaceRequest("setinfo", req, &rsp)
 	return
 }
 
@@ -422,12 +422,12 @@ type GetInfoRsp struct {
 }
 
 //GetInfo 获取一个Person的信息, 包括name, id, tag, 相关的face, 以及groups等信息。
-func (y *Youtu) GetInfo(personID string) (gir GetInfoRsp, err error) {
+func (y *Youtu) GetInfo(personID string) (rsp GetInfoRsp, err error) {
 	req := getInfoReq{
 		AppID:    y.appID(),
 		PersonID: personID,
 	}
-	err = y.interfaceRequest("getinfo", req, &gir)
+	err = y.interfaceRequest("getinfo", req, &rsp)
 	return
 }
 
@@ -443,11 +443,11 @@ type GetGroupIDsRsp struct {
 }
 
 //GetGroupIDs 获取一个appId下所有group列表
-func (y *Youtu) GetGroupIDs() (ggr GetGroupIDsRsp, err error) {
+func (y *Youtu) GetGroupIDs() (rsp GetGroupIDsRsp, err error) {
 	req := getGroupIDsReq{
 		AppID: y.appID(),
 	}
-	err = y.interfaceRequest("getgroupids", req, &ggr)
+	err = y.interfaceRequest("getgroupids", req, &rsp)
 	return
 }
 
@@ -464,12 +464,12 @@ type GetPersonIDsRsp struct {
 }
 
 //GetPersonIDs 获取一个组Group中所有person列表
-func (y *Youtu) GetPersonIDs(groupID string) (gpr GetPersonIDsRsp, err error) {
+func (y *Youtu) GetPersonIDs(groupID string) (rsp GetPersonIDsRsp, err error) {
 	req := getPersonIDsReq{
 		AppID:   y.appID(),
 		GroupID: groupID,
 	}
-	err = y.interfaceRequest("getpersonids", req, &gpr)
+	err = y.interfaceRequest("getpersonids", req, &rsp)
 	return
 }
 
@@ -486,12 +486,12 @@ type GetFaceIDsRsp struct {
 }
 
 //GetFaceIDs 获取一个组person中所有face列表
-func (y *Youtu) GetFaceIDs(personID string) (gfr GetFaceIDsRsp, err error) {
+func (y *Youtu) GetFaceIDs(personID string) (rsp GetFaceIDsRsp, err error) {
 	req := getFaceIDsReq{
 		AppID:    y.appID(),
 		PersonID: personID,
 	}
-	err = y.interfaceRequest("getfaceids", req, &gfr)
+	err = y.interfaceRequest("getfaceids", req, &rsp)
 	return
 }
 
@@ -508,11 +508,11 @@ type GetFaceInfoRsp struct {
 }
 
 //GetFaceInfo 获取一个face的相关特征信息
-func (y *Youtu) GetFaceInfo(faceID string) (gfr GetFaceInfoRsp, err error) {
+func (y *Youtu) GetFaceInfo(faceID string) (rsp GetFaceInfoRsp, err error) {
 	req := getFaceInfoReq{
 		AppID:  y.appID(),
 		FaceID: faceID,
 	}
-	err = y.interfaceRequest("getfaceinfo", req, &gfr)
+	err = y.interfaceRequest("getfaceinfo", req, &rsp)
 	return
 }
