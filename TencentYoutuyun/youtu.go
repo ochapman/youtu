@@ -8,19 +8,9 @@
 package youtu
 
 import (
-	"crypto/hmac"
-	"crypto/sha1"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
-	"fmt"
-	"io/ioutil"
-	"math/rand"
-	"net/http"
-	"os"
 	"strconv"
-	"strings"
-	"time"
 )
 
 const (
@@ -524,88 +514,5 @@ func (y *Youtu) GetFaceInfo(faceID string) (gfr GetFaceInfoRsp, err error) {
 		FaceID: faceID,
 	}
 	err = y.interfaceRequest("getfaceinfo", req, &gfr)
-	return
-}
-
-func (y *Youtu) interfaceURL(ifname string) string {
-	return fmt.Sprintf("http://%s/youtu/api/%s", y.host, ifname)
-}
-
-func (y *Youtu) interfaceRequest(ifname string, req, rsp interface{}) (err error) {
-	url := y.interfaceURL(ifname)
-	if y.debug {
-		fmt.Printf("req: %#v\n", req)
-	}
-	data, err := json.Marshal(req)
-	if err != nil {
-		return
-	}
-	body, err := y.get(url, string(data))
-	if err != nil {
-		return
-	}
-	err = json.Unmarshal(body, &rsp)
-	if err != nil {
-		if y.debug {
-			fmt.Fprintf(os.Stderr, "body:%s\n", string(body))
-		}
-		return fmt.Errorf("json.Unmarshal() rsp: %s failed: %s\n", rsp, err)
-	}
-	return
-}
-
-func (y *Youtu) orignalSign() string {
-	as := y.appSign
-	now := time.Now().Unix()
-	rand.Seed(int64(now))
-	rnd := rand.Int31()
-	sign := fmt.Sprintf("a=%d&k=%s&e=%d&t=%d&r=%d&u=%s&f=",
-		as.appID,
-		as.secretID,
-		now+expiredInterval,
-		now,
-		rnd,
-		as.userID)
-
-	if y.debug {
-		fmt.Printf("orignal sign: %s\n", sign)
-	}
-	return sign
-}
-
-func (y *Youtu) sign() string {
-	origSign := y.orignalSign()
-	h := hmac.New(sha1.New, []byte(y.appSign.secretKey))
-	h.Write([]byte(origSign))
-	hm := h.Sum(nil)
-	//attach orig_sign to hm
-	dstSign := []byte(string(hm) + origSign)
-	b64 := base64.StdEncoding.EncodeToString(dstSign)
-	return b64
-}
-
-func (y *Youtu) get(addr string, req string) (rsp []byte, err error) {
-	client := &http.Client{
-		Timeout: time.Duration(5 * time.Second),
-	}
-	httpreq, err := http.NewRequest("POST", addr, strings.NewReader(req))
-	if err != nil {
-		return
-	}
-	auth := y.sign()
-	if y.debug {
-		fmt.Fprintf(os.Stderr, "Authorization: %s\n", auth)
-	}
-	httpreq.Header.Add("Authorization", auth)
-	httpreq.Header.Add("Content-Type", "text/json")
-	httpreq.Header.Add("User-Agent", "")
-	httpreq.Header.Add("Accept", "*/*")
-	httpreq.Header.Add("Expect", "100-continue")
-	resp, err := client.Do(httpreq)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-	rsp, err = ioutil.ReadAll(resp.Body)
 	return
 }
