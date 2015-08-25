@@ -573,16 +573,6 @@ func (y *Youtu) orignalSign() string {
 	return sign
 }
 
-//EncodeImage 图片文件编码
-func EncodeImage(file string) (imgData string, err error) {
-	buf, err := ioutil.ReadFile(file)
-	if err != nil {
-		return
-	}
-	imgData = base64.StdEncoding.EncodeToString(buf)
-	return
-}
-
 func (y *Youtu) sign() string {
 	origSign := y.orignalSign()
 	h := hmac.New(sha1.New, []byte(y.appSign.secretKey))
