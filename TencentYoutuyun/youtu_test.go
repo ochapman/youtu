@@ -39,6 +39,20 @@ func TestDetectFace(t *testing.T) {
 	t.Logf("dfr: %#v\n", dfr)
 }
 
+func TestFaceShape(t *testing.T) {
+	imgData, err := ioutil.ReadFile(testDataDir + "faceshape.jpg")
+	if err != nil {
+		t.Errorf("ReadFile failed: %s\n", err)
+		return
+	}
+	rsp, err := yt.FaceShape(imgData, DetectModeNormal)
+	if err != nil {
+		t.Errorf("FaceShape failed: %s\n", err)
+		return
+	}
+	t.Logf("rsp: %#v\n", rsp)
+}
+
 func TestFaceCompare(t *testing.T) {
 	imageA, err := ioutil.ReadFile(testDataDir + "imageA.jpg")
 	if err != nil {

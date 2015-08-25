@@ -93,6 +93,10 @@ const (
 	DetectModeBigFace
 )
 
+func (y *Youtu) SetDebug(isDebug bool) {
+	y.debug = isDebug
+}
+
 type detectFaceReq struct {
 	AppID string     `json:"app_id"`         //App的 API ID
 	Image string     `json:"image"`          //base64编码的二进制图片数据
@@ -126,10 +130,6 @@ type DetectFaceRsp struct {
 	ErrorMsg    string `json:"errormsg"`     //返回错误消息
 }
 
-func (y *Youtu) SetDebug(isDebug bool) {
-	y.debug = isDebug
-}
-
 //DetectFace 检测给定图片(Image)中的所有人脸(Face)的位置和相应的面部属性。
 //位置包括(x, y, w, h)，面部属性包括性别(gender), 年龄(age),
 //表情(expression), 眼镜(glass)和姿态(pitch，roll，yaw).
@@ -141,6 +141,48 @@ func (y *Youtu) DetectFace(imageData []byte, mode DetectMode) (dfr DetectFaceRsp
 		Mode:  mode,
 	}
 	err = y.interfaceRequest("detectface", req, &dfr)
+	return
+}
+
+type faceShapeReq struct {
+	AppID string     `json:"app_id"`         //App的 API ID
+	Image string     `json:"image"`          //base64编码的二进制图片数据
+	Mode  DetectMode `json:"mode,omitempty"` //检测模式 0/1 正常/大脸模式
+}
+
+type XY struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+
+type FaceShape struct {
+	FaceProfile  []XY `json:"face_profile"`  //描述脸型轮廓的21点
+	LeftEye      []XY `json:"left_eye"`      //描述左眼轮廓的8点
+	RightEye     []XY `json:"right_eye"`     //描述右眼轮廓的8点
+	LeftEyebrow  []XY `json:"left_eyebrow"`  //描述左眉轮廓的8点
+	RightEyebrow []XY `json:"right_eyebrow"` //描述右眉轮廓的8点
+	Mouth        []XY `json:"mouth"`         //描述嘴巴轮廓的22点
+	Nose         []XY `json:"nose"`          //描述鼻子轮廓的13点
+}
+
+// FaceShape返回
+type FaceShapeRsp struct {
+	SessionID   string      `json:"session_id"`   //相应请求的session标识符，可用于结果查询
+	FaceShape   []FaceShape `json:"face_shape"`   //人脸轮廓结构体，包含所有人脸的轮廓点
+	ImageWidth  int         `json:"image_width"`  //请求图片的宽度
+	ImageHeight int         `json:"image_height"` //请求图片的高度
+	ErrorCode   int         `json:"errorcode"`    //返回状态值
+	ErrorMsg    string      `json:"errormsg"`     //返回错误消息
+}
+
+func (y *Youtu) FaceShape(image []byte, mode DetectMode) (fsr FaceShapeRsp, err error) {
+	b64Image := base64.StdEncoding.EncodeToString(image)
+	req := faceShapeReq{
+		AppID: strconv.Itoa(int(y.appSign.appID)),
+		Image: b64Image,
+		Mode:  mode,
+	}
+	err = y.interfaceRequest("faceshape", req, &fsr)
 	return
 }
 
