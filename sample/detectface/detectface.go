@@ -11,7 +11,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/ochapman/youtu/TencentYoutuyun"
+	"github.com/ochapman/youtu"
 )
 
 func main() {
