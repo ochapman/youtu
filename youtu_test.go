@@ -21,7 +21,7 @@ var as = AppSign{
 	userID: "3041722595",
 }
 
-const testDataDir = "../testdata/"
+const testDataDir = "./testdata/"
 
 var yt = Init(as, DefaultHost)
 
