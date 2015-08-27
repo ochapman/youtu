@@ -34,7 +34,7 @@ func main() {
 	}
 
 	yt := youtu.Init(as, youtu.DefaultHost)
-	df, err := yt.DetectFace(imgData, youtu.DetectModeNormal)
+	df, err := yt.DetectFace(imgData, false)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "DetectFace() failed: %s", err)
 		return
