@@ -90,6 +90,7 @@ func mode(isBigFace bool) detectMode {
 	return detectModeNormal
 }
 
+// SetDebug For Debug
 func (y *Youtu) SetDebug(isDebug bool) {
 	y.debug = isDebug
 }
@@ -163,7 +164,7 @@ type FaceShape struct {
 	Nose         []pos `json:"nose"`          //描述鼻子轮廓的13点
 }
 
-// FaceShape返回
+// FaceShapeRsp 返回
 type FaceShapeRsp struct {
 	SessionID   string      `json:"session_id"`   //相应请求的session标识符，可用于结果查询
 	FaceShape   []FaceShape `json:"face_shape"`   //人脸轮廓结构体，包含所有人脸的轮廓点
