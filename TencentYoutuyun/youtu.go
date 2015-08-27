@@ -140,19 +140,20 @@ type faceShapeReq struct {
 	Mode  DetectMode `json:"mode,omitempty"` //检测模式 0/1 正常/大脸模式
 }
 
-type XY struct {
+type pos struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 }
 
+//FaceShape 五官定位
 type FaceShape struct {
-	FaceProfile  []XY `json:"face_profile"`  //描述脸型轮廓的21点
-	LeftEye      []XY `json:"left_eye"`      //描述左眼轮廓的8点
-	RightEye     []XY `json:"right_eye"`     //描述右眼轮廓的8点
-	LeftEyebrow  []XY `json:"left_eyebrow"`  //描述左眉轮廓的8点
-	RightEyebrow []XY `json:"right_eyebrow"` //描述右眉轮廓的8点
-	Mouth        []XY `json:"mouth"`         //描述嘴巴轮廓的22点
-	Nose         []XY `json:"nose"`          //描述鼻子轮廓的13点
+	FaceProfile  []pos `json:"face_profile"`  //描述脸型轮廓的21点
+	LeftEye      []pos `json:"left_eye"`      //描述左眼轮廓的8点
+	RightEye     []pos `json:"right_eye"`     //描述右眼轮廓的8点
+	LeftEyebrow  []pos `json:"left_eyebrow"`  //描述左眉轮廓的8点
+	RightEyebrow []pos `json:"right_eyebrow"` //描述右眉轮廓的8点
+	Mouth        []pos `json:"mouth"`         //描述嘴巴轮廓的22点
+	Nose         []pos `json:"nose"`          //描述鼻子轮廓的13点
 }
 
 // FaceShape返回
@@ -165,6 +166,7 @@ type FaceShapeRsp struct {
 	ErrorMsg    string      `json:"errormsg"`     //返回错误消息
 }
 
+//FaceShape 对请求图片进行五官定位，计算构成人脸轮廓的88个点，包括眉毛（左右各8点）、眼睛（左右各8点）、鼻子（13点）、嘴巴（22点）、脸型轮廓（21点）
 func (y *Youtu) FaceShape(image []byte, mode DetectMode) (rsp FaceShapeRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(image)
 	req := faceShapeReq{
