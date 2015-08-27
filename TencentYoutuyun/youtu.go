@@ -73,15 +73,22 @@ func Init(appSign AppSign, host string) *Youtu {
 	}
 }
 
-//DetectMode 检测模式，分正常和大脸
-type DetectMode int
+//detectMode 检测模式，分正常和大脸
+type detectMode int
 
 const (
-	//DetectModeNormal 正常模式
-	DetectModeNormal DetectMode = iota
-	//DetectModeBigFace 大脸模式
-	DetectModeBigFace
+	//detectModeNormal 正常模式
+	detectModeNormal detectMode = iota
+	//detectModeBigFace 大脸模式
+	detectModeBigFace
 )
+
+func mode(isBigFace bool) detectMode {
+	if isBigFace {
+		return detectModeBigFace
+	}
+	return detectModeNormal
+}
 
 func (y *Youtu) SetDebug(isDebug bool) {
 	y.debug = isDebug
@@ -90,7 +97,7 @@ func (y *Youtu) SetDebug(isDebug bool) {
 type detectFaceReq struct {
 	AppID string     `json:"app_id"`         //App的 API ID
 	Image string     `json:"image"`          //base64编码的二进制图片数据
-	Mode  DetectMode `json:"mode,omitempty"` //检测模式 0/1 正常/大脸模式
+	Mode  detectMode `json:"mode,omitempty"` //检测模式 0/1 正常/大脸模式
 }
 
 //Face 脸参数
@@ -123,12 +130,12 @@ type DetectFaceRsp struct {
 //DetectFace 检测给定图片(Image)中的所有人脸(Face)的位置和相应的面部属性。
 //位置包括(x, y, w, h)，面部属性包括性别(gender), 年龄(age),
 //表情(expression), 眼镜(glass)和姿态(pitch，roll，yaw).
-func (y *Youtu) DetectFace(imageData []byte, mode DetectMode) (rsp DetectFaceRsp, err error) {
+func (y *Youtu) DetectFace(imageData []byte, isBigFace bool) (rsp DetectFaceRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(imageData)
 	req := detectFaceReq{
 		AppID: strconv.Itoa(int(y.appSign.appID)),
 		Image: b64Image,
-		Mode:  mode,
+		Mode:  mode(isBigFace),
 	}
 	err = y.interfaceRequest("detectface", req, &rsp)
 	return
@@ -137,7 +144,7 @@ func (y *Youtu) DetectFace(imageData []byte, mode DetectMode) (rsp DetectFaceRsp
 type faceShapeReq struct {
 	AppID string     `json:"app_id"`         //App的 API ID
 	Image string     `json:"image"`          //base64编码的二进制图片数据
-	Mode  DetectMode `json:"mode,omitempty"` //检测模式 0/1 正常/大脸模式
+	Mode  detectMode `json:"mode,omitempty"` //检测模式 0/1 正常/大脸模式
 }
 
 type pos struct {
@@ -167,12 +174,12 @@ type FaceShapeRsp struct {
 }
 
 //FaceShape 对请求图片进行五官定位，计算构成人脸轮廓的88个点，包括眉毛（左右各8点）、眼睛（左右各8点）、鼻子（13点）、嘴巴（22点）、脸型轮廓（21点）
-func (y *Youtu) FaceShape(image []byte, mode DetectMode) (rsp FaceShapeRsp, err error) {
+func (y *Youtu) FaceShape(image []byte, isBigFace bool) (rsp FaceShapeRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(image)
 	req := faceShapeReq{
 		AppID: strconv.Itoa(int(y.appSign.appID)),
 		Image: b64Image,
-		Mode:  mode,
+		Mode:  mode(isBigFace),
 	}
 	err = y.interfaceRequest("faceshape", req, &rsp)
 	return

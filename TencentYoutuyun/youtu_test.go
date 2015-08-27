@@ -31,7 +31,7 @@ func TestDetectFace(t *testing.T) {
 		t.Errorf("ReadFile failed: %s", err)
 		return
 	}
-	rsp, err := yt.DetectFace(imgData, DetectModeNormal)
+	rsp, err := yt.DetectFace(imgData, false)
 	if err != nil {
 		t.Errorf("Detect face faild: %s", err)
 		return
@@ -45,7 +45,7 @@ func TestFaceShape(t *testing.T) {
 		t.Errorf("ReadFile failed: %s\n", err)
 		return
 	}
-	rsp, err := yt.FaceShape(imgData, DetectModeNormal)
+	rsp, err := yt.FaceShape(imgData, false)
 	if err != nil {
 		t.Errorf("FaceShape failed: %s\n", err)
 		return
