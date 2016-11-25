@@ -115,6 +115,7 @@ type Face struct {
 	Pitch      int32   `json:"pitch"`      //上下偏移[-30,30]
 	Yaw        int32   `json:"yaw"`        //左右偏移[-30,30]
 	Roll       int32   `json:"roll"`       //平面旋转[-180,180]
+	Beauty     int32   `json:"beauty"`     //魅力值[0-100]
 }
 
 //DetectFaceRsp 脸检测返回
