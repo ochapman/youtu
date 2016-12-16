@@ -2,6 +2,7 @@
 * File Name:	youtu.go
 * Description:  http://open.youtu.qq.com API
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
+* Editor: RickyShi
 * Created:	2015-06-19
  */
 
@@ -252,12 +253,17 @@ type faceIdentifyReq struct {
 
 //FaceIdentifyRsp 脸识别返回
 type FaceIdentifyRsp struct {
-	SessionID  string  `json:"session_id"` //相应请求的session标识符，可用于结果查询
-	PersonID   string  `json:"person_id"`  //识别结果，person_id
-	FaceID     string  `json:"face_id"`    //识别的face_id
-	Confidence float32 `json:"confidence"` //置信度
-	ErrorCode  int     `json:"errorcode"`  //返回状态码
-	ErrorMsg   string  `json:"errormsg"`   //返回错误消息
+	SessionID  string         `json:"session_id"` //相应请求的session标识符，可用于结果查询
+	ErrorCode  int            `json:"errorcode"`  //返回状态码
+	ErrorMsg   string         `json:"errormsg"`   //返回错误消息
+	Candidates []IdentifyItem `json:"candidates"`
+}
+
+type IdentifyItem struct {
+	PersonId   string  `json:"person_id"`
+	FaceId     string  `json:"face_id"`
+	Confidence float64 `json:"confidence"`
+	Tag        string  `json:"tag"`
 }
 
 //FaceIdentify 对于一个待识别的人脸图片，在一个Group中识别出最相似的Person作为其身份返回
