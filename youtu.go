@@ -252,7 +252,7 @@ type faceIdentifyReq struct {
 	AppID   string `json:"app_id"`   //App的 API ID
 	GroupID string `json:"group_id"` //候选人组id
 	Image   string `json:"image"`    //使用base64编码的二进制图片数据
-	Url     string //图片URL
+	Url     string `json:"url"`      //图片的url
 }
 
 //FaceIdentifyRsp 脸识别返回
