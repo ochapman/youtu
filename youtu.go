@@ -136,10 +136,9 @@ type DetectFaceRsp struct {
 //位置包括(x, y, w, h)，面部属性包括性别(gender), 年龄(age),
 //表情(expression), 眼镜(glass)和姿态(pitch，roll，yaw).
 func (y *Youtu) DetectFace(imageUrl string, imageData []byte, isBigFace bool) (rsp DetectFaceRsp, err error) {
-	b64Image := base64.StdEncoding.EncodeToString(imageData)
+	// b64Image := base64.StdEncoding.EncodeToString(imageData)
 	req := detectFaceReq{
 		AppID: strconv.Itoa(int(y.appSign.appID)),
-		Image: b64Image,
 		Url:   imageUrl,
 		Mode:  mode(isBigFace),
 	}
@@ -540,3 +539,4 @@ func (y *Youtu) GetFaceInfo(faceID string) (rsp GetFaceInfoRsp, err error) {
 	err = y.interfaceRequest("getfaceinfo", req, &rsp)
 	return
 }
+
