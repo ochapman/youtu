@@ -5,7 +5,7 @@
 ### 下载:
 
 ```bash
-go get https://github.com/ochapman/youtu
+go get github.com/RickyShiJs/youtu
 ```
 
 ### 使用:
