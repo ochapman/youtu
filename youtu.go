@@ -4,6 +4,7 @@
 * Author:	Chapman Ou <ochapman.cn@gmail.com>
 * Editor: RickyShi
 * Created:	2015-06-19
+* Updated: 2012-12-21
  */
 
 package youtu
@@ -100,6 +101,7 @@ type detectFaceReq struct {
 	AppID string     `json:"app_id"`         //App的 API ID
 	Image string     `json:"image"`          //base64编码的二进制图片数据
 	Mode  detectMode `json:"mode,omitempty"` //检测模式 0/1 正常/大脸模式
+	Url   string     `json:"url"`            //图片的url
 }
 
 //Face 脸参数
@@ -133,11 +135,12 @@ type DetectFaceRsp struct {
 //DetectFace 检测给定图片(Image)中的所有人脸(Face)的位置和相应的面部属性。
 //位置包括(x, y, w, h)，面部属性包括性别(gender), 年龄(age),
 //表情(expression), 眼镜(glass)和姿态(pitch，roll，yaw).
-func (y *Youtu) DetectFace(imageData []byte, isBigFace bool) (rsp DetectFaceRsp, err error) {
+func (y *Youtu) DetectFace(imageUrl string, imageData []byte, isBigFace bool) (rsp DetectFaceRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(imageData)
 	req := detectFaceReq{
 		AppID: strconv.Itoa(int(y.appSign.appID)),
 		Image: b64Image,
+		Url:   imageUrl,
 		Mode:  mode(isBigFace),
 	}
 	err = y.interfaceRequest("detectface", req, &rsp)
@@ -285,6 +288,7 @@ type newPersonReq struct {
 	GroupIDs   []string `json:"group_ids"`             // 	加入到组的列表
 	PersonName string   `json:"person_name,omitempty"` //名字
 	Tag        string   `json:"tag,omitempty"`         //备注信息
+	Url        string   `json:"url"`                   //图片的url
 }
 
 //NewPersonRsp 个体创建返回
@@ -300,7 +304,7 @@ type NewPersonRsp struct {
 }
 
 //NewPerson 创建一个Person，并将Person放置到group_ids指定的组当中
-func (y *Youtu) NewPerson(personID string, personName string, groupIDs []string, image []byte, tag string) (rsp NewPersonRsp, err error) {
+func (y *Youtu) NewPerson(imageUrl string, personID string, personName string, groupIDs []string, image []byte, tag string) (rsp NewPersonRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(image)
 	req := newPersonReq{
 		AppID:      y.appID(),
@@ -309,6 +313,7 @@ func (y *Youtu) NewPerson(personID string, personName string, groupIDs []string,
 		GroupIDs:   groupIDs,
 		PersonName: personName,
 		Tag:        tag,
+		Url:        imageUrl,
 	}
 	err = y.interfaceRequest("newperson", req, &rsp)
 	return
