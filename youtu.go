@@ -252,6 +252,7 @@ type faceIdentifyReq struct {
 	AppID   string `json:"app_id"`   //App的 API ID
 	GroupID string `json:"group_id"` //候选人组id
 	Image   string `json:"image"`    //使用base64编码的二进制图片数据
+	Url     string //图片URL
 }
 
 //FaceIdentifyRsp 脸识别返回
@@ -270,12 +271,13 @@ type IdentifyItem struct {
 }
 
 //FaceIdentify 对于一个待识别的人脸图片，在一个Group中识别出最相似的Person作为其身份返回
-func (y *Youtu) FaceIdentify(groupID string, image []byte) (rsp FaceIdentifyRsp, err error) {
+func (y *Youtu) FaceIdentify(url string, groupID string, image []byte) (rsp FaceIdentifyRsp, err error) {
 	b64Image := base64.StdEncoding.EncodeToString(image)
 	req := faceIdentifyReq{
 		AppID:   y.appID(),
 		GroupID: groupID,
 		Image:   b64Image,
+		Url:     url,
 	}
 	err = y.interfaceRequest("faceidentify", req, &rsp)
 	return
